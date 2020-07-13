@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://blog.crazylinux.cc/post/2018/pipenv-guide/</loc>
+    
+    <lastmod>2020-07-13T14:37:41.085Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://blog.crazylinux.cc/post/2018/spider-hupubxj-csv/</loc>
     
     <lastmod>2019-10-28T01:30:24.000Z</lastmod>
@@ -205,13 +212,6 @@
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/post/2017/python-send-mail/</loc>
-    
-    <lastmod>2018-01-04T03:05:58.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://blog.crazylinux.cc/post/2017/python3-ipy/</loc>
     
     <lastmod>2018-01-04T03:05:58.000Z</lastmod>
@@ -219,9 +219,9 @@
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/post/2018/pipenv-guide/</loc>
+    <loc>https://blog.crazylinux.cc/post/2017/python-send-mail/</loc>
     
-    <lastmod>2018-01-04T03:04:28.000Z</lastmod>
+    <lastmod>2018-01-04T03:05:58.000Z</lastmod>
     
   </url>
   

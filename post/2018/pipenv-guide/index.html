@@ -30,7 +30,7 @@
 <meta property="og:description" content="pipenv是requests作者的一个项目, 整合了virtualenv, pip的优点，用于更方便地为项目建立虚拟环境并管理虚拟环境中的第三方模块。后来这个项目交给Python基金会维护。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-01-04T02:42:55.000Z">
-<meta property="article:modified_time" content="2018-01-04T03:04:28.000Z">
+<meta property="article:modified_time" content="2020-07-13T14:37:41.085Z">
 <meta property="article:author" content="pengshp">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -213,10 +213,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2018-01-04 10:42:55 / 修改时间：11:04:28" itemprop="dateCreated datePublished" datetime="2018-01-04T10:42:55+08:00">2018-01-04</time>
+              <time title="创建时间：2018-01-04 10:42:55" itemprop="dateCreated datePublished" datetime="2018-01-04T10:42:55+08:00">2018-01-04</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-13 22:37:41" itemprop="dateModified" datetime="2020-07-13T22:37:41+08:00">2020-07-13</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -234,13 +240,6 @@
               </span>
               <span class="post-meta-item-text">阅读次数：</span>
               <span class="leancloud-visitors-count"></span>
-            </span>
-            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span id="busuanzi_value_page_pv"></span>
             </span>
   
   <span class="post-meta-item">
@@ -278,14 +277,9 @@
 <li>使用 pipenv graph命令可以看到依赖树</li>
 </ul>
 <h4 id="1、安装Pipenv"><a href="#1、安装Pipenv" class="headerlink" title="1、安装Pipenv"></a>1、安装Pipenv</h4><pre><code>pip3 install pipenv</code></pre><h4 id="2、创建虚拟环境"><a href="#2、创建虚拟环境" class="headerlink" title="2、创建虚拟环境"></a>2、创建虚拟环境</h4><p>pipenv管理虚拟环境是按项目来的, 要为你的某个项目新建一个虚拟环境, 只需要在项目目录下运行如下命令:</p>
-<pre><code># 新建Python2 的虚拟环境
-pipenv --two
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建Python2 的虚拟环境</span></span><br><span class="line">pipenv --two</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新建Python3 的虚拟环境</span></span><br><span class="line">pipenv --three</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更换豆瓣的pipy源</span></span><br><span class="line">sed -i s/pypi.python.org/pypi.doubanio.com/g Pipfile</span><br></pre></td></tr></table></figure>
 
-# 新建Python3 的虚拟环境
-pipenv --three
-
-# 更换豆瓣的pipy源
-sed -i s/pypi.python.org/pypi.doubanio.com/g Pipfile</code></pre><p>该命令会在项目目录下生成一个<code>Pipfile</code>的文件，用于记录虚拟环境的信息及第三方依赖的信息。</p>
+<p>该命令会在项目目录下生成一个<code>Pipfile</code>的文件，用于记录虚拟环境的信息及第三方依赖的信息。</p>
 <h4 id="3、安装第三方模块"><a href="#3、安装第三方模块" class="headerlink" title="3、安装第三方模块"></a>3、安装第三方模块</h4><p>pipenv可以自动安装你项目的第三方模块 :</p>
 <pre><code>pipenv install</code></pre><p>安装列表是通过读取<code>pipfile</code>, <code>pipfile.lock</code>文件实现的, 如果没有这两个文件就根据<code>requirements.txt</code>生成<code>pipfile</code>和<code>pipfile.lock</code>并读取.<br>如果想单独安装某个模块还可以指定模块名安装:</p>
 <pre><code>pipenv install sanic</code></pre><p>单独安装模块后会自动将新模块信息添加到pipfile中, 要同时更新pipfile.lock需要运行:</p>
@@ -294,7 +288,7 @@ pipenv shell
 
 # 退出
 exit</code></pre><p>还有一个 <code>pipenv run</code>的可以直接执行 <code>virtualenv</code>环境下的命令。</p>
-<h4 id="5、基本命令"><a href="#5、基本命令" class="headerlink" title="5、基本命令"></a>5、基本命令</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Usage: pipenv [OPTIONS] COMMAND [ARGS]...</span><br><span class="line">Options:</span><br><span class="line">  --update         升级 pipenv, pip 到最新.</span><br><span class="line">  --where          输出项目的目录信息.</span><br><span class="line">  --venv           输出 virtualenv 的目录信息.</span><br><span class="line">  --py             输出 Python 解析器的路径.</span><br><span class="line">  --envs           输出环境变量的设置.</span><br><span class="line">  --rm             删除当前 virtualenv.</span><br><span class="line">  --bare           Minimal output.</span><br><span class="line">  --completion     Output completion (to be evald).</span><br><span class="line">  --man            显示使用手册.</span><br><span class="line">  --three / --two  使用 Python 3/2 来创建 virtualenv</span><br><span class="line">  --python TEXT    直接指定 Python 解析器.</span><br><span class="line">  --site-packages  拷贝系统 site-packages 到 virtualenv.</span><br><span class="line">  --jumbotron      An easter egg, effectively.</span><br><span class="line">  --version        显示版本信息并退出.</span><br><span class="line">  -h, --help       显示当前信息并退出.</span><br><span class="line">Commands:</span><br><span class="line">  check      检查安全漏洞和反对 PEP 508 标记在Pipfile提供.</span><br><span class="line">  graph      显示当前依赖关系图信息.</span><br><span class="line">  install    安装提供的包，并加入 Pipfile 的依赖清单中</span><br><span class="line">  lock       生成 Pipfile.lock.</span><br><span class="line">  open       在编辑器(vim)查看一个特定模块.</span><br><span class="line">  run        在 virtualenv 中执行命令.</span><br><span class="line">  shell      切换到 virtualenv 中.</span><br><span class="line">  uninstall  删除提供的包，并清理 Pipfile 的依赖清单中.</span><br><span class="line">  update     卸载当前所以依赖，然后安装最新包</span><br></pre></td></tr></table></figure>
+<h4 id="5、基本命令"><a href="#5、基本命令" class="headerlink" title="5、基本命令"></a>5、基本命令</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Usage: pipenv [OPTIONS] COMMAND [ARGS]...</span><br><span class="line">Options:</span><br><span class="line">  --update         升级 pipenv, pip 到最新.</span><br><span class="line">  --<span class="built_in">where</span>          输出项目的目录信息.</span><br><span class="line">  --venv           输出 virtualenv 的目录信息.</span><br><span class="line">  --py             输出 Python 解析器的路径.</span><br><span class="line">  --envs           输出环境变量的设置.</span><br><span class="line">  --rm             删除当前 virtualenv.</span><br><span class="line">  --bare           Minimal output.</span><br><span class="line">  --completion     Output completion (to be evald).</span><br><span class="line">  --man            显示使用手册.</span><br><span class="line">  --three / --two  使用 Python 3/2 来创建 virtualenv</span><br><span class="line">  --python TEXT    直接指定 Python 解析器.</span><br><span class="line">  --site-packages  拷贝系统 site-packages 到 virtualenv.</span><br><span class="line">  --jumbotron      An easter egg, effectively.</span><br><span class="line">  --version        显示版本信息并退出.</span><br><span class="line">  -h, --<span class="built_in">help</span>       显示当前信息并退出.</span><br><span class="line">Commands:</span><br><span class="line">  check      检查安全漏洞和反对 PEP 508 标记在Pipfile提供.</span><br><span class="line">  graph      显示当前依赖关系图信息.</span><br><span class="line">  install    安装提供的包，并加入 Pipfile 的依赖清单中</span><br><span class="line">  lock       生成 Pipfile.lock.</span><br><span class="line">  open       在编辑器(vim)查看一个特定模块.</span><br><span class="line">  run        在 virtualenv 中执行命令.</span><br><span class="line">  shell      切换到 virtualenv 中.</span><br><span class="line">  uninstall  删除提供的包，并清理 Pipfile 的依赖清单中.</span><br><span class="line">  update     卸载当前所以依赖，然后安装最新包</span><br></pre></td></tr></table></figure>
 
 
 
