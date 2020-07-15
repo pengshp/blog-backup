@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.crazylinux.cc/"/>
-  <updated>2019-05-20T21:51:34.000Z</updated>
+  <updated>2020-07-15T07:30:57.927Z</updated>
   <id>https://blog.crazylinux.cc/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 OpenSSL 自签名 TLS/SSL 证书</title>
+    <link href="https://blog.crazylinux.cc/post/2020/openssl-https/"/>
+    <id>https://blog.crazylinux.cc/post/2020/openssl-https/</id>
+    <published>2020-07-15T06:20:44.000Z</published>
+    <updated>2020-07-15T07:30:57.927Z</updated>
+    
+    <content type="html"><![CDATA[<p>有时需要一个本地的自签名证书，便于本地的加密https 访问，或者用于开发和测试，OpenSSL 便可以方便自签名一个证书，下面介绍使用方法。</p><a id="more"></a><p>自签名TLS/SSL证书过程：OpenSSL 生成一个私钥server.key，使用私钥生成证书请求文件server.csr,再使用server.key 和 server.csr 生成证书文件server.crt</p><h2 id="1、安装OpenSSL"><a href="#1、安装OpenSSL" class="headerlink" title="1、安装OpenSSL"></a>1、安装OpenSSL</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Debian</span></span><br><span class="line">~$ sudo apt install -y openssl</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> CentOS</span></span><br><span class="line">~$ sudo yum install -y openssl</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看版本</span></span><br><span class="line">~$ openssl version</span><br><span class="line">OpenSSL 1.1.1g  21 Apr 2020</span><br></pre></td></tr></table></figure><h2 id="2、生成CSR证书请求文件和私钥"><a href="#2、生成CSR证书请求文件和私钥" class="headerlink" title="2、生成CSR证书请求文件和私钥"></a>2、生成CSR证书请求文件和私钥</h2><p>使用秋水逸冰大佬制作的网站在线生成,点击  <a href="https://www.csr.sh/" target="_blank" rel="noopener">https://www.csr.sh/</a></p><p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/image-20200715143203262.png" alt="image-csr"></p><p>域名可以填写泛域名，这样可以匹配<code>www.alarmpi.lan</code>,<code>dl.alarmpi.lan</code></p><p>点击生成CSR，复制出来用编辑器打开，分两部分，上半部分为证书的请求文件，下半部分为私钥，分别保存为<code>server.csr</code>,<code>server.key</code></p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">openssl$</span><span class="bash"> ls</span></span><br><span class="line">server.csr  server.key</span><br></pre></td></tr></table></figure><h2 id="3、使用OpenSSL生成服务证书"><a href="#3、使用OpenSSL生成服务证书" class="headerlink" title="3、使用OpenSSL生成服务证书"></a>3、使用OpenSSL生成服务证书</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">~$ openssl x509 -req -days 3650 -in server.csr -signkey server.key -out server.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=C = CN, CN = *.alarmpi.lan, L = Guangzhou, O = RaspberryPi, ST = Guangdong, OU = IT</span><br><span class="line">Getting Private key</span><br><span class="line"></span><br><span class="line">~$ $ ls</span><br><span class="line">server.crt  server.csr  server.key</span><br></pre></td></tr></table></figure><p><code>-days</code>指定证书的有效期，这个证书的有效期为10年。</p><h2 id="4、验证证书的有效性"><a href="#4、验证证书的有效性" class="headerlink" title="4、验证证书的有效性"></a>4、验证证书的有效性</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~$ openssl verify server.crt</span><br></pre></td></tr></table></figure><h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p>1、<a href="https://dev.to/techschoolguru/how-to-create-sign-ssl-tls-certificates-2aai" target="_blank" rel="noopener">How to create &amp; sign SSL/TLS certificates</a></p><p>2、<a href="https://www.freecodecamp.org/news/openssl-command-cheatsheet-b441be1e8c4a/" target="_blank" rel="noopener">OpenSSL command cheatsheet</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;有时需要一个本地的自签名证书，便于本地的加密https 访问，或者用于开发和测试，OpenSSL 便可以方便自签名一个证书，下面介绍使用方法。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Linux" scheme="https://blog.crazylinux.cc/categories/Linux/"/>
+    
+    
+      <category term="Linux" scheme="https://blog.crazylinux.cc/tags/Linux/"/>
+    
+  </entry>
   
   <entry>
     <title>CentOS 防火墙 firewalld 的管理</title>
@@ -448,31 +471,6 @@
     <summary type="html">
     
       &lt;p&gt;&lt;img src=&quot;/images/FTP-Server.png&quot; alt=&quot;ftp&quot;&gt;&lt;br&gt;FTP是文件传输协议，可实现Windows和Linux之间快速的上传和下载文件。CentOS下搭建FTP服务器一般使用&lt;code&gt;vsftpd&lt;/code&gt;,搭建的环境为&lt;code&gt;CentOS7.4&lt;/code&gt;,下面是搭建和配置过程。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="CentOS" scheme="https://blog.crazylinux.cc/categories/CentOS/"/>
-    
-    
-      <category term="CentOS" scheme="https://blog.crazylinux.cc/tags/CentOS/"/>
-    
-      <category term="Linux" scheme="https://blog.crazylinux.cc/tags/Linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CentOS7基本配置</title>
-    <link href="https://blog.crazylinux.cc/post/2017/centos-basic-config/"/>
-    <id>https://blog.crazylinux.cc/post/2017/centos-basic-config/</id>
-    <published>2017-10-02T13:49:46.000Z</published>
-    <updated>2020-07-14T04:57:27.860Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="/images/centos.png" alt="centos"><br>CentOS是目前主流的服务器发行版本，本文介绍CentOS初始化安装后的一些基本配置，版本为最新的CentOS7.4.安装时勾选安装基本的开发组件。</p><a id="more"></a><h3 id="配置网络"><a href="#配置网络" class="headerlink" title="配置网络"></a>配置网络</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo nmtui  <span class="comment">#  配置IP</span></span><br><span class="line">sudo systemctl start network</span><br><span class="line">sudo systemctl <span class="built_in">enable</span> network</span><br></pre></td></tr></table></figure><h3 id="修改yum源"><a href="#修改yum源" class="headerlink" title="修改yum源"></a>修改yum源</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line">yum clean all</span><br><span class="line">yum makecache</span><br></pre></td></tr></table></figure><h3 id="更新软件源"><a href="#更新软件源" class="headerlink" title="更新软件源"></a>更新软件源</h3><pre><code>$ yum -y update</code></pre><h3 id="安装pip"><a href="#安装pip" class="headerlink" title="安装pip"></a>安装pip</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum -y install epel-release</span><br><span class="line">yum -y install python-pip</span><br><span class="line">sudo pip install --upgrade pip</span><br></pre></td></tr></table></figure><h3 id="安装-zsh-oh-my-zsh"><a href="#安装-zsh-oh-my-zsh" class="headerlink" title="安装 zsh + oh my zsh"></a>安装 zsh + oh my zsh</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ yum install zsh</span><br><span class="line">$ git <span class="built_in">clone</span> git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh</span><br><span class="line">$ git <span class="built_in">clone</span> git://github.com/jimmijj/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting</span><br><span class="line">$ cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc</span><br><span class="line">chsh -s /bin/zsh</span><br><span class="line">$ vim ~/.zshrc</span><br><span class="line">ZSH_THEME=<span class="string">"sammy"</span></span><br><span class="line">plugins=(</span><br><span class="line">zsh-syntax-highlighting</span><br><span class="line">git)</span><br></pre></td></tr></table></figure><h3 id="安装vim"><a href="#安装vim" class="headerlink" title="安装vim"></a>安装vim</h3><pre><code>$ yum -y install vim</code></pre><h3 id="配置vim"><a href="#配置vim" class="headerlink" title="配置vim"></a>配置vim</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">[root@CentOS7] ~$ vim /etc/vim/vimrc</span><br><span class="line">" 开启语法高亮</span><br><span class="line">syntax on </span><br><span class="line">" 检测文件类型</span><br><span class="line">filetype on</span><br><span class="line">" 设置在Vim中可以使用鼠标，防止终端无法拷贝</span><br><span class="line">if has('mouse')</span><br><span class="line">    set mouse-=a</span><br><span class="line">endif</span><br><span class="line">" 显示当前行号和列号</span><br><span class="line">set ruler</span><br><span class="line">" 在状态栏显示正在输入的命令</span><br><span class="line">set showcmd</span><br><span class="line">" 左下角显示当前Vim模式</span><br><span class="line">set showmode</span><br><span class="line">" 显示行号</span><br><span class="line">"set number</span><br><span class="line">" 设置tab宽度</span><br><span class="line">set tabstop=4  </span><br><span class="line">" 智能自动缩进</span><br><span class="line">set smartindent</span><br><span class="line">" 设置自动对齐空格数</span><br><span class="line">set shiftwidth=4</span><br><span class="line">" 设置编码方式</span><br><span class="line"> set encoding=utf-8</span><br><span class="line"> </span><br><span class="line"> set helplang=cn</span><br><span class="line"> set shiftwidth=4</span><br><span class="line"> set softtabstop=4</span><br><span class="line"> set magic</span><br><span class="line"> set cursorline</span><br><span class="line"> </span><br><span class="line"> set hlsearch</span><br><span class="line"> set incsearch</span><br><span class="line"> set autoindent</span><br><span class="line"> </span><br><span class="line"> " 使用空格代替tab</span><br><span class="line"> set expandtab</span><br><span class="line"> set smarttab</span><br></pre></td></tr></table></figure><h3 id="安装常用软件"><a href="#安装常用软件" class="headerlink" title="安装常用软件"></a>安装常用软件</h3><pre><code>$ yum install -y net-tools git htop lrzsz</code></pre><h3 id="安装中文支持包"><a href="#安装中文支持包" class="headerlink" title="安装中文支持包"></a>安装中文支持包</h3><pre><code>$ yum -y groupinstall chinese-support</code></pre><h3 id="安装基本编译环境"><a href="#安装基本编译环境" class="headerlink" title="安装基本编译环境"></a>安装基本编译环境</h3><pre><code>$ yum -y install gcc gcc-c++ make</code></pre><h3 id="关闭SELinux"><a href="#关闭SELinux" class="headerlink" title="关闭SELinux"></a>关闭SELinux</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vim /etc/selinux/config</span></span><br><span class="line">SELINUX=disabled</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;img src=&quot;/images/centos.png&quot; alt=&quot;centos&quot;&gt;&lt;br&gt;CentOS是目前主流的服务器发行版本，本文介绍CentOS初始化安装后的一些基本配置，版本为最新的CentOS7.4.安装时勾选安装基本的开发组件。&lt;/p&gt;
     
     </summary>
     

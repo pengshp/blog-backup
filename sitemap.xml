@@ -4,7 +4,21 @@
   <url>
     <loc>https://blog.crazylinux.cc/post/2017/centos-basic-config/</loc>
     
-    <lastmod>2020-07-14T04:57:27.860Z</lastmod>
+    <lastmod>2020-07-15T07:40:03.272Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.crazylinux.cc/post/2016/raspbian-install-docker/</loc>
+    
+    <lastmod>2020-07-15T07:32:40.356Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://blog.crazylinux.cc/post/2020/openssl-https/</loc>
+    
+    <lastmod>2020-07-15T07:30:57.927Z</lastmod>
     
   </url>
   
@@ -191,13 +205,6 @@
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/post/2016/raspbian-install-docker/</loc>
-    
-    <lastmod>2018-10-18T14:57:00.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://blog.crazylinux.cc/post/2017/centos-install-python3/</loc>
     
     <lastmod>2018-10-18T14:45:26.000Z</lastmod>
@@ -254,14 +261,14 @@
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/post/2017/python3-ipy/</loc>
+    <loc>https://blog.crazylinux.cc/post/2017/python-send-mail/</loc>
     
     <lastmod>2018-01-04T03:05:58.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/post/2017/python-send-mail/</loc>
+    <loc>https://blog.crazylinux.cc/post/2017/python3-ipy/</loc>
     
     <lastmod>2018-01-04T03:05:58.000Z</lastmod>
     
