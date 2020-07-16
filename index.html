@@ -131,7 +131,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">44</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">45</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -188,6 +188,103 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2020/docker-buildx-multi-arch-images/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/me.png">
+      <meta itemprop="name" content="pengshp">
+      <meta itemprop="description" content="2B的世界NB的活着!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Vicent's Blog!">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/2020/docker-buildx-multi-arch-images/" class="post-title-link" itemprop="url">使用 Docker buildx 构建多架构镜像</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-07-16 13:38:05 / 修改时间：16:27:49" itemprop="dateCreated datePublished" datetime="2020-07-16T13:38:05+08:00">2020-07-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/post/2020/docker-buildx-multi-arch-images/" class="post-meta-item leancloud_visitors" data-flag-title="使用 Docker buildx 构建多架构镜像" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/2020/docker-buildx-multi-arch-images/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/2020/docker-buildx-multi-arch-images/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/blog-docker-buildx.png" alt="blog-docker-buildx"></p>
+<p>Docker Buildx 是一个 docker CLI 插件，其扩展了 docker 命令，支持 Moby BuildKit 提供的功能。提供了与 docker build 相同的用户体验，并增加了许多新功能。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/post/2020/docker-buildx-multi-arch-images/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2020/linux-bbr-speed/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -213,7 +310,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-07-16 12:36:45 / 修改时间：13:29:01" itemprop="dateCreated datePublished" datetime="2020-07-16T12:36:45+08:00">2020-07-16</time>
+              <time title="创建时间：2020-07-16 12:36:45 / 修改时间：13:37:11" itemprop="dateCreated datePublished" datetime="2020-07-16T12:36:45+08:00">2020-07-16</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -257,7 +354,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>TCP BBR 是由 Google 设计，于2016年发布的拥塞算法，可以降低 TCP 握手的延迟时间，加快 VPS 代理的速度，本文介绍如何在 VPS上开启 bbr,并打开<code>tcp_fastopen</code></p>
+          <p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/blog-linux-bbr.png" alt="blog-linux-bbr"></p>
+<p>TCP BBR 是由 Google 设计，于2016年发布的拥塞算法，可以降低 TCP 握手的延迟时间，加快 VPS 代理的速度，本文介绍如何在 VPS上开启 bbr,并打开<code>tcp_fastopen</code></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/post/2020/linux-bbr-speed/#more" rel="contents">
@@ -1092,108 +1190,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2018/rpi-dnscrypt-proxy/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/me.png">
-      <meta itemprop="name" content="pengshp">
-      <meta itemprop="description" content="2B的世界NB的活着!">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Vicent's Blog!">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/2018/rpi-dnscrypt-proxy/" class="post-title-link" itemprop="url">树莓派配置 dnscrypt-proxy</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-02-18 22:49:58" itemprop="dateCreated datePublished" datetime="2018-02-18T22:49:58+08:00">2018-02-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-14 12:52:00" itemprop="dateModified" datetime="2020-07-14T12:52:00+08:00">2020-07-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/RaspberryPi/" itemprop="url" rel="index"><span itemprop="name">RaspberryPi</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/post/2018/rpi-dnscrypt-proxy/" class="post-meta-item leancloud_visitors" data-flag-title="树莓派配置 dnscrypt-proxy" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/2018/rpi-dnscrypt-proxy/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/2018/rpi-dnscrypt-proxy/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="/images/dnscrypt.png" alt="dnscrypt"><br><code>dnscrypt-proxy</code>可防止DNS污染，最新的2.0.x版本增加缓存DNS功能，加快DNS解析速度。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/2018/rpi-dnscrypt-proxy/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1265,7 +1261,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
