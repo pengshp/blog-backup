@@ -12,14 +12,16 @@
 
 <link rel="stylesheet" href="/css/main.css">
 
-<link rel="stylesheet" href="//fonts.font.im/css?family=Lato:300,300italic,400,400italic,700,700italic|Monaco:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
-  <script src="/lib/pace/pace.min.js"></script>
 
-<script id="hexo-configurations">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+<script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
   </script>
 
   <meta name="description" content="FTP是文件传输协议，可实现Windows和Linux之间快速的上传和下载文件。CentOS下搭建FTP服务器一般使用vsftpd,搭建的环境为CentOS7.4,下面是搭建和配置过程。">
@@ -41,7 +43,7 @@
 <link rel="canonical" href="https://blog.crazylinux.cc/post/2017/centos-install-ftp-server/">
 
 
-<script id="page-configurations">
+<script class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
@@ -70,24 +72,36 @@
 
   <noscript>
   <style>
-  .use-motion .brand,
+  body { margin-top: 2rem; }
+
   .use-motion .menu-item,
-  .sidebar-inner,
+  .use-motion .sidebar,
   .use-motion .post-block,
   .use-motion .pagination,
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
 
   .use-motion .site-title,
-  .use-motion .site-subtitle {
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
     opacity: initial;
     top: initial;
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
   </style>
 </noscript>
 
@@ -98,22 +112,23 @@
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+        <span class="toggle-line toggle-line-first"></span>
+        <span class="toggle-line toggle-line-middle"></span>
+        <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
   <div class="site-meta">
 
     <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
+      <i class="logo-line"></i>
       <h1 class="site-title">Neal's Blog!</h1>
-      <span class="logo-line-after"><i></i></span>
+      <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">个人博客，记录点滴!</p>
   </div>
@@ -126,42 +141,41 @@
 
 
 
-
 <nav class="site-nav">
-  <ul id="menu" class="menu">
+  <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">46</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">46</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">13</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">29</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
 
   </li>
         <li class="menu-item menu-item-guestbook">
 
-    <a href="/guestbook/" rel="section"><i class="fa fa-fw fa-comments"></i>留言</a>
+    <a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
 
   </li>
         <li class="menu-item menu-item-commonweal">
 
-    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益</a>
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
 
   </li>
   </ul>
@@ -171,9 +185,122 @@
 
 
 </div>
-    </header>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
 
-    
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装FTP服务"><span class="nav-number">1.</span> <span class="nav-text">安装FTP服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置FTP服务器"><span class="nav-number">2.</span> <span class="nav-text">配置FTP服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#了解vsftpd配置"><span class="nav-number">2.1.</span> <span class="nav-text">了解vsftpd配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阻止匿名访问和切换根目录"><span class="nav-number">2.2.</span> <span class="nav-text">阻止匿名访问和切换根目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建FTP用户"><span class="nav-number">2.3.</span> <span class="nav-text">创建FTP用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限制FTP用户只能FTP访问"><span class="nav-number">2.4.</span> <span class="nav-text">限制FTP用户只能FTP访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为用户分配主目录"><span class="nav-number">2.5.</span> <span class="nav-text">为用户分配主目录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动FTP服务器并开机自启"><span class="nav-number">3.</span> <span class="nav-text">启动FTP服务器并开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置防火墙允许FTP访问"><span class="nav-number">4.</span> <span class="nav-text">设置防火墙允许FTP访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问FTP服务器"><span class="nav-number">5.</span> <span class="nav-text">访问FTP服务器</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pengshp"
+      src="/images/me.png">
+  <p class="site-author-name" itemprop="name">pengshp</p>
+  <div class="site-description" itemprop="description">2B的世界NB的活着!</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pengshp" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pengshp3@outlook.com" title="E-Mail → mailto:pengshp3@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/pengshp" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/pengshp" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://gaomf.cn/" title="https:&#x2F;&#x2F;gaomf.cn&#x2F;" rel="noopener" target="_blank">高明飞博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.phpgao.com/archives.html" title="https:&#x2F;&#x2F;blog.phpgao.com&#x2F;archives.html" rel="noopener" target="_blank">老高博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://linsir.org/" title="https:&#x2F;&#x2F;linsir.org&#x2F;" rel="noopener" target="_blank">Linsir's Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.lxx1.com/" title="https:&#x2F;&#x2F;blog.lxx1.com" rel="noopener" target="_blank">科技爱好者</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://spadesq.me/" title="http:&#x2F;&#x2F;spadesq.me" rel="noopener" target="_blank">SpadesQ</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://lupeng.me/" title="http:&#x2F;&#x2F;lupeng.me" rel="noopener" target="_blank">LP'Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.gitbook.net/" title="http:&#x2F;&#x2F;www.gitbook.net" rel="noopener" target="_blank">极客书</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://yukang.me/" title="http:&#x2F;&#x2F;yukang.me&#x2F;" rel="noopener" target="_blank">裕康博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://wuxiaolong.me/" title="http:&#x2F;&#x2F;wuxiaolong.me" rel="noopener" target="_blank">吴小龙同学</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
   <div class="back-to-top">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
@@ -181,14 +308,16 @@
   <div class="reading-progress-bar"></div>
   <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
 
-    <main class="main">
+
       <div class="main-inner">
-        <div class="content-wrap">
-          
+        
 
-          <div class="content post posts-expand">
-            
+        <div class="content post posts-expand">
+          
 
     
   
@@ -213,7 +342,7 @@
         <div class="post-meta">
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
 
@@ -221,14 +350,14 @@
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
+                  <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
+                <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
@@ -248,7 +377,7 @@
   <span class="post-meta-item">
     
       <span class="post-meta-item-icon">
-        <i class="fa fa-comment-o"></i>
+        <i class="far fa-comment"></i>
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
@@ -257,7 +386,21 @@
     </a>
   </span>
   
-  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
 
         </div>
       </header>
@@ -315,19 +458,19 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
     
     
         <div class="reward-container">
-  <div>你的支持将鼓励我继续创作!</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
+  <div>如果对你有帮助,请我喝杯奶茶吧!</div>
+  <button onclick="document.getElementById('post-reward').classList.toggle('active');">
+    赞赏
   </button>
-  <div id="qr" style="display: none;">
+  <div id="post-reward">
       
-      <div style="display: inline-block;">
-        <img src="/images/wechatpay.png" alt="pengshp 微信支付">
-        <p>微信支付</p>
+      <div>
+        <img src="/images/wechatpay.png" alt="pengshp 微信">
+        <p>微信</p>
       </div>
       
-      <div style="display: inline-block;">
-        <img src="/images/alipay.png" alt="pengshp 支付宝">
+      <div>
+        <img src="/images/alipay.jpg" alt="pengshp 支付宝">
         <p>支付宝</p>
       </div>
 
@@ -346,7 +489,7 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
     <a href="https://blog.crazylinux.cc/post/2017/centos-install-ftp-server/" title="CentOS搭建FTP服务器">https://blog.crazylinux.cc/post/2017/centos-install-ftp-server/</a>
   </li>
   <li class="post-copyright-license">
-    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
   </li>
 </ul>
 </div>
@@ -361,7 +504,7 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
         <div class="social-item">
           <a target="_blank" class="social-link" href="https://twitter.com/pengshp">
             <span class="icon">
-              <i class="fa fa-twitter"></i>
+              <i class="fab fa-twitter"></i>
             </span>
 
             <span class="label">Twitter</span>
@@ -382,7 +525,6 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
 
 
       <footer class="post-footer">
-          
           <div class="post-tags">
               <a href="/tags/centos/" rel="tag"><i class="fa fa-tag"></i> CentOS</a>
               <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
@@ -411,8 +553,8 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
 
 
 
-          </div>
-          
+        </div>
+        
     <div class="comments" id="valine-comments"></div>
 
 <script>
@@ -437,122 +579,6 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
   }
 </script>
 
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装FTP服务"><span class="nav-number">1.</span> <span class="nav-text">安装FTP服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置FTP服务器"><span class="nav-number">2.</span> <span class="nav-text">配置FTP服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#了解vsftpd配置"><span class="nav-number">2.1.</span> <span class="nav-text">了解vsftpd配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阻止匿名访问和切换根目录"><span class="nav-number">2.2.</span> <span class="nav-text">阻止匿名访问和切换根目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建FTP用户"><span class="nav-number">2.3.</span> <span class="nav-text">创建FTP用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限制FTP用户只能FTP访问"><span class="nav-number">2.4.</span> <span class="nav-text">限制FTP用户只能FTP访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为用户分配主目录"><span class="nav-number">2.5.</span> <span class="nav-text">为用户分配主目录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动FTP服务器并开机自启"><span class="nav-number">3.</span> <span class="nav-text">启动FTP服务器并开机自启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置防火墙允许FTP访问"><span class="nav-number">4.</span> <span class="nav-text">设置防火墙允许FTP访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问FTP服务器"><span class="nav-number">5.</span> <span class="nav-text">访问FTP服务器</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="pengshp"
-      src="/images/me.png">
-  <p class="site-author-name" itemprop="name">pengshp</p>
-  <div class="site-description" itemprop="description">2B的世界NB的活着!</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">46</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">13</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">29</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <a href="https://github.com/pengshp" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:pengshp@gmail.com" title="E-Mail → mailto:pengshp@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://twitter.com/pengshp" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://instagram.com/pengshp" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
-      </span>
-  </div>
-
-
-  <div class="links-of-blogroll motion-element">
-    <div class="links-of-blogroll-title">
-      <i class="fa fa-fw fa-link"></i>
-      友链
-    </div>
-    <ul class="links-of-blogroll-list">
-        <li class="links-of-blogroll-item">
-          <a href="https://gaomf.cn/" title="https:&#x2F;&#x2F;gaomf.cn&#x2F;" rel="noopener" target="_blank">高明飞博客</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://blog.phpgao.com/archives.html" title="https:&#x2F;&#x2F;blog.phpgao.com&#x2F;archives.html" rel="noopener" target="_blank">老高博客</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://linsir.org/" title="https:&#x2F;&#x2F;linsir.org&#x2F;" rel="noopener" target="_blank">Linsir's Blog</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="https://blog.lxx1.com/" title="https:&#x2F;&#x2F;blog.lxx1.com" rel="noopener" target="_blank">科技爱好者</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="http://spadesq.me/" title="http:&#x2F;&#x2F;spadesq.me" rel="noopener" target="_blank">SpadesQ</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="http://lupeng.me/" title="http:&#x2F;&#x2F;lupeng.me" rel="noopener" target="_blank">LP'Blog</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="http://www.gitbook.net/" title="http:&#x2F;&#x2F;www.gitbook.net" rel="noopener" target="_blank">极客书</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="http://yukang.me/" title="http:&#x2F;&#x2F;yukang.me&#x2F;" rel="noopener" target="_blank">裕康博客</a>
-        </li>
-        <li class="links-of-blogroll-item">
-          <a href="http://wuxiaolong.me/" title="http:&#x2F;&#x2F;wuxiaolong.me" rel="noopener" target="_blank">吴小龙同学</a>
-        </li>
-    </ul>
-  </div>
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
       </div>
     </main>
 
@@ -567,11 +593,21 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
   &copy; 2016 – 
   <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">pengshp</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">57k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">52 分钟</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
 
         
@@ -609,24 +645,15 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
 
 <script src="/js/utils.js"></script>
 
 <script src="/js/motion.js"></script>
 
 
-<script src="/js/schemes/pisces.js"></script>
-
-
 <script src="/js/next-boot.js"></script>
 
 <script src="/js/bookmark.js"></script>
-
-
-  <script defer src="/lib/three/three.min.js"></script>
-    <script defer src="/lib/three/three-waves.min.js"></script>
 
 
   
@@ -661,28 +688,12 @@ $ firewall-cmd --reload  # 重载防火墙</code></pre><h3 id="访问FTP服务�
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
-    });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : true,
-      notify     : true,
-      appId      : 'DVyboNGqTwbmE8bIXWnuHSec-9Nh9j0Va',
-      appKey     : 'MjcAKd3zkHmb6dfmX5DSo57h',
-      placeholder: "Just go go",
-      avatar     : 'wavatar',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : true,
-      lang       : 'zh-cn' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : true,
-      serverURLs : ''
-    });
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    new Valine(Object.assign({
+      el  : '#valine-comments',
+      path: location.pathname,
+    }, {"enable":true,"appId":"DVyboNGqTwbmE8bIXWnuHSec-9Nh9j0Va","appKey":"MjcAKd3zkHmb6dfmX5DSo57h","placeholder":"留个言再走吧! 支持Markdown语法吆...","avatar":"wavatar","meta":["nick","mail","link"],"pageSize":10,"language":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null}
+    ));
   }, window.Valine);
 });
 </script>
