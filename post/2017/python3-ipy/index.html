@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">45</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">46</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -143,7 +143,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">28</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">29</span></a>
 
   </li>
         <li class="menu-item menu-item-guestbook">
@@ -229,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
                 </span>
             </span>
 
@@ -289,7 +289,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.0.0/23'</span>).overlaps(<span class="string">'192.168.1.0/24'</span>)</span><br><span class="line"><span class="number">1</span>   <span class="comment">#返回1代表存在重叠</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.0.0/23'</span>).overlaps(<span class="string">'192.168.22.0/24'</span>)</span><br><span class="line"><span class="number">0</span>   <span class="comment">#返回0代表不存在重叠</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="4、综合应用"><a href="#4、综合应用" class="headerlink" title="4、综合应用"></a>4、综合应用</h4><p>一个自动识别IP地址、子网、方向解析、IP类型的脚本</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip_s = input(‘请输入IP地址或者网段地址: ‘)</span><br><span class="line">ips = IP(ip_s)   <span class="comment">#定义元素</span></span><br><span class="line"><span class="keyword">if</span> len(ips) &gt; <span class="number">1</span>:  <span class="comment">#如果len出来的数字大于1，那么就是一个网段</span></span><br><span class="line">	print(‘网络地址: %s’ % ips.net())</span><br><span class="line">	print(‘子网掩码: %s’ % ips.netmask())</span><br><span class="line">	print(‘网络广播地址: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">	print(‘网络子网数: %s’ % len(ips))</span><br><span class="line"><span class="keyword">else</span>:   <span class="comment">###否则就是一个地址</span></span><br><span class="line">	print(‘IP反向解析: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">	print(‘十六进制地址: %s’ % ips.strHex())</span><br><span class="line">	print(‘二进制地址: %s’ % ips.strBin())</span><br><span class="line">	print(‘地址类型: %s’ % ips.iptype())</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip_s = input(‘请输入IP地址或者网段地址: ‘)</span><br><span class="line">ips = IP(ip_s)   <span class="comment">#定义元素</span></span><br><span class="line"><span class="keyword">if</span> len(ips) &gt; <span class="number">1</span>:  <span class="comment">#如果len出来的数字大于1，那么就是一个网段</span></span><br><span class="line">4print(‘网络地址: %s’ % ips.net())</span><br><span class="line">4print(‘子网掩码: %s’ % ips.netmask())</span><br><span class="line">4print(‘网络广播地址: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘网络子网数: %s’ % len(ips))</span><br><span class="line"><span class="keyword">else</span>:   <span class="comment">###否则就是一个地址</span></span><br><span class="line">4print(‘IP反向解析: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘十六进制地址: %s’ % ips.strHex())</span><br><span class="line">4print(‘二进制地址: %s’ % ips.strBin())</span><br><span class="line">4print(‘地址类型: %s’ % ips.iptype())</span><br></pre></td></tr></table></figure>
 
 
 
@@ -369,7 +369,7 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
           </div>
 
         
@@ -460,7 +460,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -473,7 +473,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -135,7 +135,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">45</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">46</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -145,7 +145,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">28</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">29</span></a>
 
   </li>
         <li class="menu-item menu-item-guestbook">
@@ -231,7 +231,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CentOS/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
+                  <a href="/categories/centos/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
                 </span>
             </span>
 
@@ -283,7 +283,7 @@
 
 <h4 id="5、开放某个端口"><a href="#5、开放某个端口" class="headerlink" title="5、开放某个端口"></a>5、开放某个端口</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 临时</span></span><br><span class="line">$ firewall-cmd --zone=public --add-port=8080/tcp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 永久</span></span><br><span class="line">$ firewall-cmd --permanent --zone=public --add-port=8080/tcp</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载防火墙使生效</span></span><br><span class="line">$ firewall-cmd --reload</span><br></pre></td></tr></table></figure>
 
-<h4 id="6、查看开启的服务和端口"><a href="#6、查看开启的服务和端口" class="headerlink" title="6、查看开启的服务和端口"></a>6、查看开启的服务和端口</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 开启的服务</span><br><span class="line">$ firewall-cmd --permanent --zone&#x3D;public --list-services</span><br><span class="line"></span><br><span class="line"># 开启的端口</span><br><span class="line">$ firewall-cmd --permanent --zone&#x3D;public --list-ports</span><br></pre></td></tr></table></figure>
+<h4 id="6、查看开启的服务和端口"><a href="#6、查看开启的服务和端口" class="headerlink" title="6、查看开启的服务和端口"></a>6、查看开启的服务和端口</h4><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开启的服务</span></span><br><span class="line">$ firewall-cmd <span class="params">--permanent</span> <span class="params">--zone=public</span> <span class="params">--list-services</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启的端口</span></span><br><span class="line">$ firewall-cmd <span class="params">--permanent</span> <span class="params">--zone=public</span> <span class="params">--list-ports</span></span><br></pre></td></tr></table></figure>
 
 <h4 id="7、查询服务的启用状态"><a href="#7、查询服务的启用状态" class="headerlink" title="7、查询服务的启用状态"></a>7、查询服务的启用状态</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ firewall-cmd ---query-service http</span><br></pre></td></tr></table></figure>
 
@@ -364,7 +364,7 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/CentOS/" rel="tag"><i class="fa fa-tag"></i> CentOS</a>
+              <a href="/tags/centos/" rel="tag"><i class="fa fa-tag"></i> CentOS</a>
           </div>
 
         
@@ -455,7 +455,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">45</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -468,7 +468,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
