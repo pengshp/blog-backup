@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://blog.crazylinux.cc/"/>
-  <updated>2020-07-18T09:19:02.728Z</updated>
+  <updated>2020-08-20T07:44:48.357Z</updated>
   <id>https://blog.crazylinux.cc/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Linux配置Tinyproxy代理</title>
+    <link href="https://blog.crazylinux.cc/post/2020/linux-tinyproxy-config/"/>
+    <id>https://blog.crazylinux.cc/post/2020/linux-tinyproxy-config/</id>
+    <published>2020-08-20T06:18:32.000Z</published>
+    <updated>2020-08-20T07:44:48.357Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/tinyproxy.png" alt="tinyproxy"></p><p><code>Tinyproxy</code>是一个轻量级的http代理软件，速度快体积小，可以使用来把socks5代理转为http代理。测试环境为 :fire: ​ArchLinux,IP:172.16.10.18,Socks5端口1090.</p><a id="more"></a><h3 id="1-查询软件包"><a href="#1-查询软件包" class="headerlink" title="1.查询软件包"></a>1.查询软件包</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~$ pacman -Ss tinyproxy</span><br><span class="line">community/tinyproxy 1.10.0-2 [已安装]</span><br><span class="line">    A light-weight HTTP proxy daemon for POSIX operating systems.</span><br></pre></td></tr></table></figure><h3 id="2-安装tinyproxy"><a href="#2-安装tinyproxy" class="headerlink" title="2.安装tinyproxy"></a>2.安装tinyproxy</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo pacman -Sy tinyproxy</span><br></pre></td></tr></table></figure><h3 id="3-修改配置文件"><a href="#3-修改配置文件" class="headerlink" title="3.修改配置文件"></a>3.修改配置文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">~$ vim /etc/tinyproxy/tinyproxy.conf</span><br><span class="line">User tinyproxy</span><br><span class="line">Group tinyproxy</span><br><span class="line"></span><br><span class="line">Port 8888</span><br><span class="line"></span><br><span class="line">Listen 0.0.0.0</span><br><span class="line"></span><br><span class="line">Timeout 600</span><br><span class="line"></span><br><span class="line">ErrorFile 404 "/usr/share/tinyproxy/404.html"</span><br><span class="line">ErrorFile 400 "/usr/share/tinyproxy/400.html"</span><br><span class="line">ErrorFile 503 "/usr/share/tinyproxy/503.html"</span><br><span class="line">ErrorFile 403 "/usr/share/tinyproxy/403.html"</span><br><span class="line"></span><br><span class="line">DefaultErrorFile "/usr/share/tinyproxy/default.html"</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">StatFile "/usr/share/tinyproxy/stats.html"</span><br><span class="line"></span><br><span class="line">LogFile "/var/log/tinyproxy/tinyproxy.log"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">关闭syslog，使用自定义的日志文件</span></span><br><span class="line"><span class="meta">#</span><span class="bash">Syslog On</span></span><br><span class="line"></span><br><span class="line">LogLevel Info</span><br><span class="line"></span><br><span class="line">PidFile "/var/run/tinyproxy/tinyproxy.pid"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 在请求头中加入客户端IP</span></span><br><span class="line"><span class="meta">#</span><span class="bash">XTinyproxy Yes</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">设置上游代理，转换上游socks5代理为http代理</span></span><br><span class="line">upstream socks5 127.0.0.1:1090</span><br><span class="line"></span><br><span class="line">MaxClients 100</span><br><span class="line"></span><br><span class="line">MinSpareServers 5</span><br><span class="line">MaxSpareServers 20</span><br><span class="line"></span><br><span class="line">StartServers 10</span><br><span class="line"></span><br><span class="line">MaxRequestsPerChild 0</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 允许局域网的哪些主机访问</span></span><br><span class="line">Allow 172.16.10.0/24</span><br><span class="line">Allow 192.168.1.0/24</span><br><span class="line"></span><br><span class="line">AddHeader "X-My-Header" "Powered by Tinyproxy"</span><br><span class="line">ViaProxyName "tinyproxy"</span><br></pre></td></tr></table></figure><h3 id="4-启动服务"><a href="#4-启动服务" class="headerlink" title="4.启动服务"></a>4.启动服务</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo systemctl start tinyproxy.service</span><br><span class="line">~$ sudo systemctl enable tinyproxy.service</span><br></pre></td></tr></table></figure><h3 id="5-测试"><a href="#5-测试" class="headerlink" title="5.测试"></a>5.测试</h3><p>在局域网内的其它主机上把代理设置为上面的Tinyproxy,测试请求头信息</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">xdl@aml:~$ export http_proxy='http://172.16.10.18:8888'</span><br><span class="line">xdl@aml:~$ export https_proxy='http://172.16.10.18:8888'</span><br><span class="line"></span><br><span class="line">xdl@aml:~$ curl -I www.baidu.com</span><br><span class="line">HTTP/1.0 200 OK</span><br><span class="line">Via: 1.1 tinyproxy (tinyproxy/1.10.0)   # &lt;------ 请求头中包含了Tinyproxy</span><br><span class="line">Cache-Control: private, no-cache, no-store, proxy-revalidate, no-transform</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Etag: "575e1f6f-115"</span><br><span class="line">Last-Modified: Mon, 13 Jun 2016 02:50:23 GMT</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Server: bfe/1.0.8.18</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Date: Thu, 20 Aug 2020 06:57:01 GMT</span><br><span class="line">Content-Length: 277</span><br></pre></td></tr></table></figure><h3 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h3><p>1.<a href="https://tinyproxy.github.io/" target="_blank" rel="noopener">https://tinyproxy.github.io/</a></p><p>2.<a href="https://github.com/tinyproxy/tinyproxy" target="_blank" rel="noopener">https://github.com/tinyproxy/tinyproxy</a></p><p>3.<a href="https://linux.cn/article-7119-1.html" target="_blank" rel="noopener">https://linux.cn/article-7119-1.html</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;https://pengshp.coding.net/p/images/d/images/git/raw/master/tinyproxy.png&quot; alt=&quot;tinyproxy&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Tinyproxy&lt;/code&gt;是一个轻量级的http代理软件，速度快体积小，可以使用来把socks5代理转为http代理。测试环境为 :fire: ​ArchLinux,IP:172.16.10.18,Socks5端口1090.&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Linux" scheme="https://blog.crazylinux.cc/categories/linux/"/>
+    
+    
+      <category term="Linux" scheme="https://blog.crazylinux.cc/tags/linux/"/>
+    
+  </entry>
   
   <entry>
     <title>我的 vim 配置文件</title>
@@ -459,31 +483,6 @@
     
       <category term="Python" scheme="https://blog.crazylinux.cc/categories/python/"/>
     
-    
-      <category term="Python" scheme="https://blog.crazylinux.cc/tags/python/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CentOS 安装 Python3</title>
-    <link href="https://blog.crazylinux.cc/post/2017/centos-install-python3/"/>
-    <id>https://blog.crazylinux.cc/post/2017/centos-install-python3/</id>
-    <published>2017-12-21T12:04:24.000Z</published>
-    <updated>2020-07-16T13:30:15.046Z</updated>
-    
-    <content type="html"><![CDATA[<p>CentOS 默认只安装 Python2 ,但未来主流的仍是 Python3，因此有必要在 CentOS 上安装 Python3，以下方式介绍在 CentOS 上编译安装Python3并解决安装后yum无法正常使用的问题。</p><a id="more"></a><h4 id="1、下载Python源代码"><a href="#1、下载Python源代码" class="headerlink" title="1、下载Python源代码"></a>1、下载Python源代码</h4><pre><code>wget https://www.python.org/ftp/python/3.6.1/Python-3.6.1.tgz</code></pre><h4 id="2、安装依赖包"><a href="#2、安装依赖包" class="headerlink" title="2、安装依赖包"></a>2、安装依赖包</h4><pre><code>yum -y install openssl-devel bzip2-devel expat-devel gdbm-devel readline-devel sqlite-devel</code></pre><h4 id="3、解压源码包"><a href="#3、解压源码包" class="headerlink" title="3、解压源码包"></a>3、解压源码包</h4><pre><code>tar -xzvf Python-3.6.1.tgzcd  Python-3.6.1/</code></pre><h4 id="4、把Python3-6安装到-usr-local-目录"><a href="#4、把Python3-6安装到-usr-local-目录" class="headerlink" title="4、把Python3.6安装到 /usr/local 目录"></a>4、把Python3.6安装到 /usr/local 目录</h4><pre><code>./configure  --prefix=/usr/local/makemake altinstall</code></pre><p>此处使用 <code>make altinstall</code> 安装是为了使Python2 和Python3 能共存，具体可见压缩包里的<code>README</code>文件.</p><p>python3.6程序的执行文件：<code>/usr/local/bin/python3.6</code><br>python3.6应用程序目录：<code>/usr/local/lib/python3.6</code><br>pip3的执行文件：<code>/usr/local/bin/pip3.6</code><br>pyenv3的执行文件：<code>/usr/local/bin/pyenv-3.6</code></p><h4 id="5、更改Python链接"><a href="#5、更改Python链接" class="headerlink" title="5、更改Python链接"></a>5、更改Python链接</h4><p>当在命令行输入Python时默认打开的是Python2版本，现在把它改为Python3；</p><pre><code>cd/usr/binmv  python python.backupln -s /usr/local/bin/python3.6 /usr/bin/pythonln -s /usr/local/bin/python3.6 /usr/bin/python3rm -rf /usr/bin/python2 ln -s /usr/bin/python2.6 /usr/bin/python2 </code></pre><h4 id="6、更改yum脚本的Python依赖"><a href="#6、更改yum脚本的Python依赖" class="headerlink" title="6、更改yum脚本的Python依赖"></a>6、更改yum脚本的Python依赖</h4><p>现在如果执行yum相关的命令，会发现不能正常执行，因为yum是用Python2开发的，然而此时Python默认指向的是Python3,二者的语法不兼容，所以会出现报错，为了解决此问题，需要修改yum相关命令的python依赖环境</p><pre><code>$ cd /usr/bin$ ls yum*yum yum-config-manager yum-debug-restore yum-groups-manager yum-builddep yum-debug-dump yumdownloader</code></pre><p>使用<code>vim</code>更改以上文件头为<br><code>!/usr/bin/python</code> 改为 <code>#!/usr/bin/python2</code></p><p>这样便能很好的解决Python的版本问题及yum不能正常使用的问题。</p><h3 id="附：快捷办法"><a href="#附：快捷办法" class="headerlink" title="附：快捷办法"></a>附：快捷办法</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install epel-release</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yum makecache</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yum install -y python36</span></span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;CentOS 默认只安装 Python2 ,但未来主流的仍是 Python3，因此有必要在 CentOS 上安装 Python3，以下方式介绍在 CentOS 上编译安装Python3并解决安装后yum无法正常使用的问题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="CentOS" scheme="https://blog.crazylinux.cc/categories/centos/"/>
-    
-    
-      <category term="CentOS" scheme="https://blog.crazylinux.cc/tags/centos/"/>
     
       <category term="Python" scheme="https://blog.crazylinux.cc/tags/python/"/>
     
