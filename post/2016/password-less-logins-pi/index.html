@@ -33,7 +33,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://blog.crazylinux.cc/images/sshpi.png">
 <meta property="article:published_time" content="2016-08-20T06:17:27.000Z">
-<meta property="article:modified_time" content="2020-07-16T13:30:15.231Z">
+<meta property="article:modified_time" content="2021-01-08T04:19:18.783Z">
 <meta property="article:author" content="pengshp">
 <meta property="article:tag" content="ssh">
 <meta property="article:tag" content="RaspberryPi">
@@ -207,7 +207,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-测试环境："><span class="nav-number">1.</span> <span class="nav-text">一.测试环境：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-设置方法"><span class="nav-number">2.</span> <span class="nav-text">二.设置方法</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-测试环境："><span class="nav-number">1.</span> <span class="nav-text">一.测试环境：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-设置方法"><span class="nav-number">2.</span> <span class="nav-text">二.设置方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附：解决xshell密钥验证登录需要输入密码的问题"><span class="nav-number"></span> <span class="nav-text">附：解决xshell密钥验证登录需要输入密码的问题</span></a></div>
       </section>
       <!--/noindex-->
 
@@ -356,7 +356,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
+                <time title="修改时间：2021-01-08 12:19:18" itemprop="dateModified" datetime="2021-01-08T12:19:18+08:00">2021-01-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -395,7 +395,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>450</span>
+              <span>522</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -422,15 +422,23 @@
 <li>登录：RaspberryPi3B</li>
 </ul>
 <h3 id="二-设置方法"><a href="#二-设置方法" class="headerlink" title="二.设置方法"></a>二.设置方法</h3><p>1.用<code>ssh-keygen</code>生成ssh密钥</p>
-<pre><code>$ ssh-keygen -t rsa
-$ cat ~/.ssh/id_rsa.pub</code></pre><p>2.安装<code>ssh-copy-id</code></p>
-<pre><code>$ brew install ssh-copy-id    # MacOS X
-$ sudo apt install ssh-copy-id  # Ubuntu/Debian
-$ yum install -y ssh-copy-id  # CentOS</code></pre><p>3.把公钥上传到树莓派</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ssh-keygen -t rsa</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat ~/.ssh/id_rsa.pub</span></span><br></pre></td></tr></table></figure>
+
+<p>2.安装<code>ssh-copy-id</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> brew install ssh-copy-id    <span class="comment"># MacOS X</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo apt install ssh-copy-id  <span class="comment"># Ubuntu/Debian</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yum install -y ssh-copy-id  <span class="comment"># CentOS</span></span></span><br></pre></td></tr></table></figure>
+
+<p>3.把公钥上传到树莓派</p>
 <pre><code>$ ssh-copy-id pi@192.168.10.195  #改为树莓派的IP地址</code></pre><p>再输入登录密码，回车便可以了。</p>
 <p>4.在家目录下新建<code>.ssh/config</code></p>
 <pre><code>$ vim ~/.ssh/config</code></pre><p>加入以下所示的内容即可，pi的名字可自己随便起，保存退出。<br><img src="/images/sshpi.png" alt="sshpi"></p>
 <p>5.登录树莓派<br>现在在终端中执行<code>ssh pi</code>便可以登录。</p>
+<h2 id="附：解决xshell密钥验证登录需要输入密码的问题"><a href="#附：解决xshell密钥验证登录需要输入密码的问题" class="headerlink" title="附：解决xshell密钥验证登录需要输入密码的问题"></a>附：解决xshell密钥验证登录需要输入密码的问题</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 700 .ssh</span><br><span class="line">chmod 600 .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
 
     </div>
 
@@ -571,7 +579,7 @@ $ yum install -y ssh-copy-id  # CentOS</code></pre><p>3.把公钥上传到树莓
 <div class="copyright">
   
   &copy; 2016 – 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -580,7 +588,7 @@ $ yum install -y ssh-copy-id  # CentOS</code></pre><p>3.把公钥上传到树莓
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">59k</span>
+    <span title="站点总字数">60k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>

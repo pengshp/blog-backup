@@ -32,7 +32,7 @@
 <meta property="og:description" content="Linux中很多服务需要进行时间同步，不然容易导致出错。本文介绍使用阿里云的时间服务器同步服务器的时间。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2018-01-31T05:49:41.000Z">
-<meta property="article:modified_time" content="2020-07-16T13:30:15.058Z">
+<meta property="article:modified_time" content="2021-01-08T04:27:07.903Z">
 <meta property="article:author" content="pengshp">
 <meta property="article:tag" content="CentOS">
 <meta name="twitter:card" content="summary">
@@ -204,7 +204,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、安装软件"><span class="nav-number">1.</span> <span class="nav-text">1、安装软件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、时间同步服务器"><span class="nav-number">2.</span> <span class="nav-text">2、时间同步服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、同步时间"><span class="nav-number">3.</span> <span class="nav-text">3、同步时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、加入计划任务"><span class="nav-number">4.</span> <span class="nav-text">4、加入计划任务</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、安装软件"><span class="nav-number">1.</span> <span class="nav-text">1、安装软件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、时间同步服务器"><span class="nav-number">2.</span> <span class="nav-text">2、时间同步服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、同步时间"><span class="nav-number">3.</span> <span class="nav-text">3、同步时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、加入计划任务"><span class="nav-number">4.</span> <span class="nav-text">4、加入计划任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用chrony同步时间"><span class="nav-number"></span> <span class="nav-text">使用chrony同步时间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-修改配置文件"><span class="nav-number">1.</span> <span class="nav-text">1. 修改配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-启动服务"><span class="nav-number">2.</span> <span class="nav-text">2. 启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-查看状态"><span class="nav-number">3.</span> <span class="nav-text">3. 查看状态</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -353,7 +353,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
+                <time title="修改时间：2021-01-08 12:27:07" itemprop="dateModified" datetime="2021-01-08T12:27:07+08:00">2021-01-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -392,7 +392,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>437</span>
+              <span>811</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -424,7 +424,19 @@
 * */2 * * * ntpdate -u ntp1.aliyun.com &amp;&gt; /dev/null
 # 每两个小时同步一次时间
 $ systemctl start crond
-$ systemctl enable crond</code></pre>
+$ systemctl enable crond</code></pre><p>​    </p>
+<h2 id="使用chrony同步时间"><a href="#使用chrony同步时间" class="headerlink" title="使用chrony同步时间"></a>使用chrony同步时间</h2><h3 id="1-修改配置文件"><a href="#1-修改配置文件" class="headerlink" title="1. 修改配置文件"></a>1. 修改配置文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[xdl@CentOS] ~$ sudo vim /etc/chrony.conf</span><br><span class="line">pool ntp1.aliyun.com iburst</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-启动服务"><a href="#2-启动服务" class="headerlink" title="2. 启动服务"></a>2. 启动服务</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[xdl@CentOS] ~$ sudo systemctl enable --now chronyd.service</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查看状态"><a href="#3-查看状态" class="headerlink" title="3. 查看状态"></a>3. 查看状态</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[xdl@CentOS] ~$ chronyc sources</span><br><span class="line">210 Number of sources = 1</span><br><span class="line">MS Name/IP address         Stratum Poll Reach LastRx Last sample</span><br><span class="line">===============================================================================</span><br><span class="line">^* 120.25.115.20                 2   6    37    64   -285us[-4209us] +/-   12ms</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
     </div>
 
     
@@ -563,7 +575,7 @@ $ systemctl enable crond</code></pre>
 <div class="copyright">
   
   &copy; 2016 – 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -572,7 +584,7 @@ $ systemctl enable crond</code></pre>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">59k</span>
+    <span title="站点总字数">60k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
