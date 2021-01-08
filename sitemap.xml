@@ -396,6 +396,13 @@
   </url>
   
   <url>
+    <loc>https://blog.crazylinux.cc/tags/docker/</loc>
+    <lastmod>2021-01-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.crazylinux.cc/tags/openwrt/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
@@ -404,13 +411,6 @@
   
   <url>
     <loc>https://blog.crazylinux.cc/tags/sdk/</loc>
-    <lastmod>2021-01-08</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://blog.crazylinux.cc/tags/docker/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -466,14 +466,14 @@
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/tags/i2c/</loc>
+    <loc>https://blog.crazylinux.cc/tags/spi/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/tags/spi/</loc>
+    <loc>https://blog.crazylinux.cc/tags/i2c/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -501,14 +501,14 @@
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/tags/mac/</loc>
+    <loc>https://blog.crazylinux.cc/tags/sdk/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/tags/sdk/</loc>
+    <loc>https://blog.crazylinux.cc/tags/mac/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
@@ -594,14 +594,14 @@
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/categories/openwrt/</loc>
+    <loc>https://blog.crazylinux.cc/categories/docker/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://blog.crazylinux.cc/categories/docker/</loc>
+    <loc>https://blog.crazylinux.cc/categories/openwrt/</loc>
     <lastmod>2021-01-08</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
