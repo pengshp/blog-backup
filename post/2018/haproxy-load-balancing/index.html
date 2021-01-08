@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,18 +15,15 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  
-  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-
-  <meta name="description" content="当随着访问量的增加时，原来的单台服务器难以承受大量的访问时，就需要使用负载均衡来分担服务器的压力。本文介绍使用HAProxy实现一个免费、高效、可靠的高可用负载均衡解决方案。">
+<meta name="description" content="当随着访问量的增加时，原来的单台服务器难以承受大量的访问时，就需要使用负载均衡来分担服务器的压力。本文介绍使用HAProxy实现一个免费、高效、可靠的高可用负载均衡解决方案。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HAProxy实现负载均衡">
 <meta property="og:url" content="https://blog.crazylinux.cc/post/2018/haproxy-load-balancing/index.html">
@@ -39,6 +38,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://7xseex.com1.z0.glb.clouddn.com/2018020116540haproxy.png">
 
+
 <link rel="canonical" href="https://blog.crazylinux.cc/post/2018/haproxy-load-balancing/">
 
 
@@ -51,23 +51,12 @@
     lang   : 'zh-CN'
   };
 </script>
-
-  <title>HAProxy实现负载均衡 | Neal's Blog!</title>
+<title>HAProxy实现负载均衡 | Neal's Blog!</title>
   
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82082919-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-82082919-1');
-      }
-    </script>
 
 
 
-
-
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "001a4dd9765d4058943d1aca09707093"}'></script>
 
   <noscript>
   <style>
@@ -107,18 +96,17 @@
 <link rel="alternate" href="/atom.xml" title="Neal's Blog!" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
-    <main class="main">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-        <div class="header-inner"><div class="site-brand-container">
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-        <span class="toggle-line toggle-line-first"></span>
-        <span class="toggle-line toggle-line-middle"></span>
-        <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
@@ -141,42 +129,14 @@
 
 
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
-
-  </li>
-        <li class="menu-item menu-item-guestbook">
-
-    <a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a></li>
+        <li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
   </ul>
 </nav>
 
@@ -184,12 +144,12 @@
 
 
 </div>
-          
+        
   
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
@@ -204,20 +164,21 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#HAProxy简介"><span class="nav-number">1.</span> <span class="nav-text">HAProxy简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HAProxy解决方案"><span class="nav-number">2.</span> <span class="nav-text">HAProxy解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验拓扑图"><span class="nav-number">3.</span> <span class="nav-text">实验拓扑图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验配置"><span class="nav-number">4.</span> <span class="nav-text">实验配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HAProxy配置"><span class="nav-number">4.1.</span> <span class="nav-text">HAProxy配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#后端Web服务器配置"><span class="nav-number">4.2.</span> <span class="nav-text">后端Web服务器配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">4.3.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></div>
-      </section>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#HAProxy%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">HAProxy简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HAProxy%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.</span> <span class="nav-text">HAProxy解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%8B%93%E6%89%91%E5%9B%BE"><span class="nav-number">3.</span> <span class="nav-text">实验拓扑图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E9%85%8D%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">实验配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HAProxy%E9%85%8D%E7%BD%AE"><span class="nav-number">4.1.</span> <span class="nav-text">HAProxy配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8E%E7%AB%AFWeb%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">4.2.</span> <span class="nav-text">后端Web服务器配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">4.3.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="pengshp"
       src="/images/me.png">
   <p class="site-author-name" itemprop="name">pengshp</p>
   <div class="site-description" itemprop="description">2B的世界NB的活着!</div>
 </div>
-<div class="site-state-wrap animated">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
@@ -240,7 +201,7 @@
       </div>
   </nav>
 </div>
-  <div class="links-of-author animated">
+  <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/pengshp" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
@@ -250,13 +211,10 @@
       <span class="links-of-author-item">
         <a href="https://twitter.com/pengshp" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
       </span>
-      <span class="links-of-author-item">
-        <a href="https://instagram.com/pengshp" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
-      </span>
   </div>
 
 
-  <div class="links-of-blogroll animated">
+  <div class="links-of-blogroll site-overview-item animated">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
       友链
     </div>
@@ -294,37 +252,37 @@
     </ul>
   </div>
 
-      </section>
+        </div>
+      </div>
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </header>
+    </header>
 
-      
-  <div class="back-to-top">
+    
+  <div class="back-to-top" role="button">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
-  <div class="reading-progress-bar"></div>
-  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 <noscript>
-  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
 
 
-      <div class="main-inner">
-        
+    <div class="main-inner post posts-expand">
 
-        <div class="content post posts-expand">
-          
 
-    
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2018/haproxy-load-balancing/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -341,68 +299,51 @@
           HAProxy实现负载均衡
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-02-01 14:07:27" itemprop="dateCreated datePublished" datetime="2018-02-01T14:07:27+08:00">2018-02-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/centos/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/post/2018/haproxy-load-balancing/" class="post-meta-item leancloud_visitors" data-flag-title="HAProxy实现负载均衡" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/2018/haproxy-load-balancing/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/2018/haproxy-load-balancing/" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-01 14:07:27" itemprop="dateCreated datePublished" datetime="2018-02-01T14:07:27+08:00">2018-02-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/centos/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
+        </span>
+    </span>
+
   
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -411,8 +352,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>当随着访问量的增加时，原来的单台服务器难以承受大量的访问时，就需要使用负载均衡来分担服务器的压力。本文介绍使用<code>HAProxy</code>实现一个免费、高效、可靠的高可用负载均衡解决方案。</p>
 <a id="more"></a>
 <h3 id="HAProxy简介"><a href="#HAProxy简介" class="headerlink" title="HAProxy简介"></a>HAProxy简介</h3><p>HAProxy是免费、高效、可靠的高可用负载均衡解决方案。适合处理高负载站点的七层数据请求，对外可屏蔽内部的真实Web服务器，防止内部服务器遭受外部攻击。</p>
@@ -423,60 +362,58 @@
 </ul>
 <h3 id="实验拓扑图"><a href="#实验拓扑图" class="headerlink" title="实验拓扑图"></a>实验拓扑图</h3><p><img src="http://7xseex.com1.z0.glb.clouddn.com/2018020116540haproxy.png" alt="2018020116540haproxy.png"></p>
 <h3 id="实验配置"><a href="#实验配置" class="headerlink" title="实验配置"></a>实验配置</h3><h4 id="HAProxy配置"><a href="#HAProxy配置" class="headerlink" title="HAProxy配置"></a>HAProxy配置</h4><p>1、安装HAProxy</p>
-<pre><code>$ yum install -y haproxy</code></pre><p>2、修改配置文件</p>
+<pre><code>$ yum install -y haproxy</code></pre>
+<p>2、修改配置文件</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ [root@CentOS7] ~$ vim /etc/haproxy/haproxy.cfg</span><br><span class="line">global</span><br><span class="line">    <span class="built_in">log</span>         127.0.0.1 local2</span><br><span class="line"></span><br><span class="line">    chroot      /var/lib/haproxy</span><br><span class="line">    pidfile     /var/run/haproxy.pid</span><br><span class="line">    maxconn     4000</span><br><span class="line">    user        haproxy</span><br><span class="line">    group       haproxy</span><br><span class="line">    daemon</span><br><span class="line"></span><br><span class="line">    <span class="comment"># turn on stats unix socket</span></span><br><span class="line">    stats socket /var/lib/haproxy/stats</span><br><span class="line"></span><br><span class="line">frontend haproxy_inbound</span><br><span class="line">    <span class="built_in">bind</span> *:80</span><br><span class="line">    default_backend haproxy_httpd</span><br><span class="line"></span><br><span class="line">backend haproxy_httpd</span><br><span class="line">    balance     roundrobin</span><br><span class="line">    option httpchk GET /index.html  <span class="comment"># 健康检查</span></span><br><span class="line">    server web1 192.168.10.129:80 check</span><br><span class="line">    server web2 192.168.10.130:80 check</span><br></pre></td></tr></table></figure>
-
 <p>3、内核优化</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/security/limits.conf</span><br><span class="line">*               soft    nofile        65535</span><br><span class="line">*               hard    nofile        65535</span><br></pre></td></tr></table></figure>
-
 <p>4、开启日志服务</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改日志配置文件</span></span><br><span class="line">$ vim /etc/rsyslog.conf</span><br><span class="line"><span class="variable">$ModLoad</span> imudp</span><br><span class="line"><span class="variable">$UDPServerRun</span> 514</span><br><span class="line">local3.*                           /var/<span class="built_in">log</span>/haproxy.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启日志服务</span></span><br><span class="line">$ systemctl restart syslog</span><br></pre></td></tr></table></figure>
-
 <p>5、开启HAProxy</p>
-<pre><code>$ haproxy -f /etc/haproxy/haproxy.cfg</code></pre><h4 id="后端Web服务器配置"><a href="#后端Web服务器配置" class="headerlink" title="后端Web服务器配置"></a>后端Web服务器配置</h4><p>后端服务器配置基本相同，为了验证试验效果，后端网页不同<br>1、配置网卡</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/sysconfig/network-scripts/ifcfg-ens33554984</span><br><span class="line">NAME=ens33554984</span><br><span class="line">BOOTPROTO=<span class="string">'static'</span></span><br><span class="line">ONBOOT=<span class="string">"yes"</span></span><br><span class="line">IPADDR=192.168.10.129</span><br><span class="line">GATEWAY=192.168.10.128  <span class="comment">#网关指向HAProxy的内网IP</span></span><br><span class="line">TYPE=<span class="string">"Ethernet"</span></span><br><span class="line"></span><br><span class="line">$ systemctl restart network</span><br></pre></td></tr></table></figure>
-
+<pre><code>$ haproxy -f /etc/haproxy/haproxy.cfg</code></pre>
+<h4 id="后端Web服务器配置"><a href="#后端Web服务器配置" class="headerlink" title="后端Web服务器配置"></a>后端Web服务器配置</h4><p>后端服务器配置基本相同，为了验证试验效果，后端网页不同<br>1、配置网卡</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/sysconfig/network-scripts/ifcfg-ens33554984</span><br><span class="line">NAME=ens33554984</span><br><span class="line">BOOTPROTO=<span class="string">&#x27;static&#x27;</span></span><br><span class="line">ONBOOT=<span class="string">&quot;yes&quot;</span></span><br><span class="line">IPADDR=192.168.10.129</span><br><span class="line">GATEWAY=192.168.10.128  <span class="comment">#网关指向HAProxy的内网IP</span></span><br><span class="line">TYPE=<span class="string">&quot;Ethernet&quot;</span></span><br><span class="line"></span><br><span class="line">$ systemctl restart network</span><br></pre></td></tr></table></figure>
 <p>2、Apache配置<br>网页文件做修改，其他配置相同</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@CentOS7] ~$ yum install -y httpd</span><br><span class="line"></span><br><span class="line"><span class="comment"># Web-1</span></span><br><span class="line">[root@CentOS7] ~$ <span class="built_in">echo</span> <span class="string">"This is Web-1"</span> &gt; /var/www/html/index.html</span><br><span class="line"></span><br><span class="line"><span class="comment"># Web-2</span></span><br><span class="line">[root@CentOS7] ~$ <span class="built_in">echo</span> <span class="string">"This is Web-2"</span> &gt; /var/www/html/index.html</span><br><span class="line"></span><br><span class="line">[root@CentOS7] ~$ systemctl start httpd</span><br><span class="line">[root@CentOS7] ~$ systemctl <span class="built_in">enable</span> httpd</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@CentOS7] ~$ yum install -y httpd</span><br><span class="line"></span><br><span class="line"><span class="comment"># Web-1</span></span><br><span class="line">[root@CentOS7] ~$ <span class="built_in">echo</span> <span class="string">&quot;This is Web-1&quot;</span> &gt; /var/www/html/index.html</span><br><span class="line"></span><br><span class="line"><span class="comment"># Web-2</span></span><br><span class="line">[root@CentOS7] ~$ <span class="built_in">echo</span> <span class="string">&quot;This is Web-2&quot;</span> &gt; /var/www/html/index.html</span><br><span class="line"></span><br><span class="line">[root@CentOS7] ~$ systemctl start httpd</span><br><span class="line">[root@CentOS7] ~$ systemctl <span class="built_in">enable</span> httpd</span><br></pre></td></tr></table></figure>
 <h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>重启HAProxy</p>
-<pre><code>$ systemctl restart haproxy.service   </code></pre><p>浏览器打开 <a href="http://192.168.10.128" target="_blank" rel="noopener">http://192.168.10.128</a>,刷新网页，便可以看到在<code>Web-1</code>和<code>Web-2</code>之间轮询。实现一个负载均衡。</p>
+<pre><code>$ systemctl restart haproxy.service   </code></pre>
+<p>浏览器打开 <a target="_blank" rel="noopener" href="http://192.168.10.128/">http://192.168.10.128</a>,刷新网页，便可以看到在<code>Web-1</code>和<code>Web-2</code>之间轮询。实现一个负载均衡。</p>
 
     </div>
 
     
     
     
-        <div class="reward-container">
-  <div>如果对你有帮助,请我喝杯奶茶吧!</div>
-  <button onclick="document.getElementById('post-reward').classList.toggle('active');">
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
     赞赏
   </button>
-  <div id="post-reward">
-      
+  <div class="post-reward">
       <div>
         <img src="/images/wechatpay.png" alt="pengshp 微信">
-        <p>微信</p>
+        <span>微信</span>
       </div>
-      
       <div>
-        <img src="/images/alipay.jpg" alt="pengshp 支付宝">
-        <p>支付宝</p>
+        <img src="/images/alipay.png" alt="pengshp 支付宝">
+        <span>支付宝</span>
       </div>
 
   </div>
 </div>
 
-        
+          
 
-<div>
-<ul class="post-copyright">
+<div class="post-copyright">
+<ul>
   <li class="post-copyright-author">
-    <strong>本文作者： </strong>pengshp
+      <strong>本文作者： </strong>pengshp
   </li>
   <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="https://blog.crazylinux.cc/post/2018/haproxy-load-balancing/" title="HAProxy实现负载均衡">https://blog.crazylinux.cc/post/2018/haproxy-load-balancing/</a>
+      <strong>本文链接：</strong>
+      <a href="https://blog.crazylinux.cc/post/2018/haproxy-load-balancing/" title="HAProxy实现负载均衡">https://blog.crazylinux.cc/post/2018/haproxy-load-balancing/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -484,67 +421,50 @@
 </ul>
 </div>
 
-        
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
 
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
+  <div class="social-list">
 
-    <div class="social-list">
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
 
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="https://twitter.com/pengshp">
-            <span class="icon">
-              <i class="fab fa-twitter"></i>
-            </span>
-
-            <span class="label">Twitter</span>
-          </a>
-        </div>
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
-    </div>
+          <span class="label">RSS</span>
+        </a>
+      </div>
   </div>
+</div>
 
-
-      <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/centos/" rel="tag"><i class="fa fa-tag"></i> CentOS</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/post/2018/web-cache-proxy-polipo/" rel="prev" title="Web 缓存代理服务器polipo">
-      <i class="fa fa-chevron-left"></i> Web 缓存代理服务器polipo
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/post/2018/rpi-dnscrypt-proxy/" rel="next" title="树莓派配置 dnscrypt-proxy">
-      树莓派配置 dnscrypt-proxy <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/2018/web-cache-proxy-polipo/" rel="prev" title="Web 缓存代理服务器polipo">
+                  <i class="fa fa-chevron-left"></i> Web 缓存代理服务器polipo
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/2018/rpi-dnscrypt-proxy/" rel="next" title="树莓派配置 dnscrypt-proxy">
+                  树莓派配置 dnscrypt-proxy <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
-  
-  
-  
+</div>
 
 
 
-        </div>
-        
-    <div class="comments" id="valine-comments"></div>
+
+
+
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -553,7 +473,7 @@
       activeClass = localStorage.getItem('comments_active') || activeClass;
     }
     if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
       if (activeTab) {
         activeTab.click();
       }
@@ -562,46 +482,41 @@
   if (CONFIG.comments.storage) {
     window.addEventListener('tabs:click', event => {
       if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
+      const commentClass = event.target.classList[1];
       localStorage.setItem('comments_active', commentClass);
     });
   }
 </script>
+</div>
+  </main>
 
-      </div>
-    </main>
+  <footer class="footer">
+    <div class="footer-inner">
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
 
 <div class="copyright">
-  
   &copy; 2016 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">pengshp</span>
-    <span class="post-meta-divider">|</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
-      <i class="fa fa-chart-area"></i>
+      <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">60k</span>
-    <span class="post-meta-divider">|</span>
+    <span title="站点总字数">62k</span>
+  </span>
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">54 分钟</span>
+    <span title="站点阅读时长">56 分钟</span>
+  </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
-
-        
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -610,7 +525,6 @@
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
-    <span class="post-meta-divider">|</span>
     <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
@@ -620,50 +534,17 @@
       </span>
     </span>
 </div>
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
 
-  
-  <script src="/lib/anime.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-<script src="/js/bookmark.js"></script>
-
+    </div>
+  </footer>
 
   
-  <script>
-    (function(){
-      var bp = document.createElement('script');
-      var curProtocol = window.location.protocol.split(':')[0];
-      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(bp, s);
-    })();
-  </script>
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
+  
 
 
 
@@ -671,21 +552,11 @@
 
 
   
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-  
 
 
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    new Valine(Object.assign({
-      el  : '#valine-comments',
-      path: location.pathname,
-    }, {"enable":true,"appId":"DVyboNGqTwbmE8bIXWnuHSec-9Nh9j0Va","appKey":"MjcAKd3zkHmb6dfmX5DSo57h","placeholder":"留个言再走吧! 支持Markdown语法吆...","avatar":"wavatar","meta":["nick","mail","link"],"pageSize":10,"language":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null}
-    ));
-  }, window.Valine);
-});
-</script>
+
 
 </body>
 </html>

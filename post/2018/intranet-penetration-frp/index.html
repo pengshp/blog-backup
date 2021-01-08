@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,18 +15,15 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  
-  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-
-  <meta name="description" content="frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp, http, https 协议。当想从公网环境访问家里或公司局域网内的服务器时便可以使用frp搭建内网穿透服务实现此功能。">
+<meta name="description" content="frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp, http, https 协议。当想从公网环境访问家里或公司局域网内的服务器时便可以使用frp搭建内网穿透服务实现此功能。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="内网穿透服务Frp">
 <meta property="og:url" content="https://blog.crazylinux.cc/post/2018/intranet-penetration-frp/index.html">
@@ -36,6 +35,7 @@
 <meta property="article:author" content="pengshp">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
+
 
 <link rel="canonical" href="https://blog.crazylinux.cc/post/2018/intranet-penetration-frp/">
 
@@ -49,23 +49,12 @@
     lang   : 'zh-CN'
   };
 </script>
-
-  <title>内网穿透服务Frp | Neal's Blog!</title>
+<title>内网穿透服务Frp | Neal's Blog!</title>
   
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82082919-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-82082919-1');
-      }
-    </script>
 
 
 
-
-
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "001a4dd9765d4058943d1aca09707093"}'></script>
 
   <noscript>
   <style>
@@ -105,18 +94,17 @@
 <link rel="alternate" href="/atom.xml" title="Neal's Blog!" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
-    <main class="main">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-        <div class="header-inner"><div class="site-brand-container">
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-        <span class="toggle-line toggle-line-first"></span>
-        <span class="toggle-line toggle-line-middle"></span>
-        <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
@@ -139,42 +127,14 @@
 
 
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
-
-  </li>
-        <li class="menu-item menu-item-guestbook">
-
-    <a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a></li>
+        <li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
   </ul>
 </nav>
 
@@ -182,12 +142,12 @@
 
 
 </div>
-          
+        
   
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
@@ -202,20 +162,21 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、原理介绍"><span class="nav-number">1.</span> <span class="nav-text">1、原理介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、服务条件"><span class="nav-number">2.</span> <span class="nav-text">2、服务条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、服务端搭建"><span class="nav-number">3.</span> <span class="nav-text">3、服务端搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、客户端搭建"><span class="nav-number">4.</span> <span class="nav-text">4、客户端搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-systemctl管理frpc服务"><span class="nav-number">5.</span> <span class="nav-text">5.systemctl管理frpc服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5、参考文档"><span class="nav-number">6.</span> <span class="nav-text">5、参考文档</span></a></li></ol></div>
-      </section>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%8E%9F%E7%90%86%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">1、原理介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%9C%8D%E5%8A%A1%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">2、服务条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%90%AD%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">3、服务端搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%90%AD%E5%BB%BA"><span class="nav-number">4.</span> <span class="nav-text">4、客户端搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-systemctl%E7%AE%A1%E7%90%86frpc%E6%9C%8D%E5%8A%A1"><span class="nav-number">5.</span> <span class="nav-text">5.systemctl管理frpc服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">6.</span> <span class="nav-text">5、参考文档</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="pengshp"
       src="/images/me.png">
   <p class="site-author-name" itemprop="name">pengshp</p>
   <div class="site-description" itemprop="description">2B的世界NB的活着!</div>
 </div>
-<div class="site-state-wrap animated">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
@@ -238,7 +199,7 @@
       </div>
   </nav>
 </div>
-  <div class="links-of-author animated">
+  <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/pengshp" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
@@ -248,13 +209,10 @@
       <span class="links-of-author-item">
         <a href="https://twitter.com/pengshp" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
       </span>
-      <span class="links-of-author-item">
-        <a href="https://instagram.com/pengshp" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
-      </span>
   </div>
 
 
-  <div class="links-of-blogroll animated">
+  <div class="links-of-blogroll site-overview-item animated">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
       友链
     </div>
@@ -292,37 +250,37 @@
     </ul>
   </div>
 
-      </section>
+        </div>
+      </div>
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </header>
+    </header>
 
-      
-  <div class="back-to-top">
+    
+  <div class="back-to-top" role="button">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
-  <div class="reading-progress-bar"></div>
-  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 <noscript>
-  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
 
 
-      <div class="main-inner">
-        
+    <div class="main-inner post posts-expand">
 
-        <div class="content post posts-expand">
-          
 
-    
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2018/intranet-penetration-frp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -339,68 +297,51 @@
           内网穿透服务Frp
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-31 14:31:40" itemprop="dateCreated datePublished" datetime="2018-01-31T14:31:40+08:00">2018-01-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/post/2018/intranet-penetration-frp/" class="post-meta-item leancloud_visitors" data-flag-title="内网穿透服务Frp" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/2018/intranet-penetration-frp/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/2018/intranet-penetration-frp/" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-31 14:31:40" itemprop="dateCreated datePublished" datetime="2018-01-31T14:31:40+08:00">2018-01-31</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
   
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -409,8 +350,6 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp, http, https 协议。当想从公网环境访问家里或公司局域网内的服务器时便可以使用frp搭建内网穿透服务实现此功能。</p>
 <a id="more"></a>
 <h3 id="1、原理介绍"><a href="#1、原理介绍" class="headerlink" title="1、原理介绍"></a>1、原理介绍</h3><p>Frp是<code>C/S</code>架构，在具有公网IP的服务器上搭建Frp的服务端，在本地局域网搭建Frp客户端；Frp通过将局域网内的IP端口映射到公网IP的某个端口上，当我们访问公网IP的这个端口时，相当于访问了其映射的局域网内的 IP:Port </p>
@@ -418,56 +357,56 @@
 <li>具有公网IP的服务器</li>
 <li>客户端和服务端使用相同或相近的版本</li>
 </ul>
-<h3 id="3、服务端搭建"><a href="#3、服务端搭建" class="headerlink" title="3、服务端搭建"></a>3、服务端搭建</h3><p>下载对应系统的最新的程序<a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">frp</a> 解压缩，进入解压目录<br>修改配置文件</p>
+<h3 id="3、服务端搭建"><a href="#3、服务端搭建" class="headerlink" title="3、服务端搭建"></a>3、服务端搭建</h3><p>下载对应系统的最新的程序<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases">frp</a> 解压缩，进入解压目录<br>修改配置文件</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ vim frps.ini</span><br><span class="line">[common]</span><br><span class="line">bind_port = 7000</span><br><span class="line">bind_udp_port = 7001</span><br><span class="line">kcp_bind_port = 7000</span><br><span class="line"></span><br><span class="line">dashboard_port = 7500</span><br><span class="line"><span class="comment"># dashboard 用户名密码，默认都为 admin</span></span><br><span class="line">dashboard_user = admin</span><br><span class="line">dashboard_pwd = admin</span><br><span class="line">vhost_http_port = 80</span><br><span class="line"></span><br><span class="line">token = xxxx <span class="comment">#自定义</span></span><br><span class="line">max_pool_count = 5</span><br><span class="line">max_ports_per_client = 0 </span><br><span class="line">authentication_timeout = 900</span><br><span class="line">subdomain_host = xxxxx.com</span><br><span class="line">tcp_mux = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
 <p>启动Frp服务端</p>
-<pre><code>$ nohup ./frps -c ./frps.ini &amp;</code></pre><h3 id="4、客户端搭建"><a href="#4、客户端搭建" class="headerlink" title="4、客户端搭建"></a>4、客户端搭建</h3><p>下载相同的程序<br>修改配置文件</p>
+<pre><code>$ nohup ./frps -c ./frps.ini &amp;</code></pre>
+<h3 id="4、客户端搭建"><a href="#4、客户端搭建" class="headerlink" title="4、客户端搭建"></a>4、客户端搭建</h3><p>下载相同的程序<br>修改配置文件</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">$ vim frpc.ini</span><br><span class="line">[common]</span><br><span class="line">server_addr = x.x.x.x   <span class="comment">#公网IP地址</span></span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">log_file = /usr/<span class="built_in">local</span>/frp/frpc.log</span><br><span class="line"><span class="comment"># trace, debug, info, warn, error</span></span><br><span class="line">log_level = info</span><br><span class="line">log_max_days = 3</span><br><span class="line"></span><br><span class="line">token = xxxxxx <span class="comment">#修改</span></span><br><span class="line">pool_count = 5</span><br><span class="line">tcp_mux = <span class="literal">true</span></span><br><span class="line">user = pi</span><br><span class="line">login_fail_exit = <span class="literal">true</span></span><br><span class="line">protocol = tcp</span><br><span class="line"></span><br><span class="line">[ssh]</span><br><span class="line"><span class="built_in">type</span> = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 6000</span><br><span class="line"></span><br><span class="line">[gogs]</span><br><span class="line"><span class="built_in">type</span> = http</span><br><span class="line">local_ip = 172.16.10.80</span><br><span class="line">local_port = 3000</span><br><span class="line">use_encryption = <span class="literal">true</span></span><br><span class="line">use_compression = <span class="literal">false</span></span><br><span class="line">subdomain = gogs</span><br><span class="line"><span class="comment">#custom_domains = gogs.xxxx.com</span></span><br></pre></td></tr></table></figure>
-
 <p>启动本地客户端</p>
-<pre><code>$ nohup ./frpc -c ./frpc.ini &amp;</code></pre><p>ssh连接局域网内的服务器</p>
-<pre><code>$ ssh -oPort=6000 root@x.x.x.x</code></pre><p>也可在局域网搭建能够被公网访问的Web服务器，开启80或443端口，更多高级的配置请参考下面的文档。</p>
+<pre><code>$ nohup ./frpc -c ./frpc.ini &amp;</code></pre>
+<p>ssh连接局域网内的服务器</p>
+<pre><code>$ ssh -oPort=6000 root@x.x.x.x</code></pre>
+<p>也可在局域网搭建能够被公网访问的Web服务器，开启80或443端口，更多高级的配置请参考下面的文档。</p>
 <h3 id="5-systemctl管理frpc服务"><a href="#5-systemctl管理frpc服务" class="headerlink" title="5.systemctl管理frpc服务"></a>5.systemctl管理frpc服务</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ vim /lib/systemd/system/frpc.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=frpc daemon</span><br><span class="line">After=network.target syslog.target</span><br><span class="line">Wants=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">Restart=always</span><br><span class="line">ExecStart=/usr/<span class="built_in">local</span>/frp/frpc -c /usr/<span class="built_in">local</span>/frp/frpc.ini</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
-
 <p>服务端同理，把<code>frpc</code>改为<code>frps</code></p>
-<h3 id="5、参考文档"><a href="#5、参考文档" class="headerlink" title="5、参考文档"></a>5、参考文档</h3><p>1、<a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="_blank" rel="noopener">Frp说明文档</a></p>
+<h3 id="5、参考文档"><a href="#5、参考文档" class="headerlink" title="5、参考文档"></a>5、参考文档</h3><p>1、<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/blob/master/README_zh.md">Frp说明文档</a></p>
 
     </div>
 
     
     
     
-        <div class="reward-container">
-  <div>如果对你有帮助,请我喝杯奶茶吧!</div>
-  <button onclick="document.getElementById('post-reward').classList.toggle('active');">
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
     赞赏
   </button>
-  <div id="post-reward">
-      
+  <div class="post-reward">
       <div>
         <img src="/images/wechatpay.png" alt="pengshp 微信">
-        <p>微信</p>
+        <span>微信</span>
       </div>
-      
       <div>
-        <img src="/images/alipay.jpg" alt="pengshp 支付宝">
-        <p>支付宝</p>
+        <img src="/images/alipay.png" alt="pengshp 支付宝">
+        <span>支付宝</span>
       </div>
 
   </div>
 </div>
 
-        
+          
 
-<div>
-<ul class="post-copyright">
+<div class="post-copyright">
+<ul>
   <li class="post-copyright-author">
-    <strong>本文作者： </strong>pengshp
+      <strong>本文作者： </strong>pengshp
   </li>
   <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="https://blog.crazylinux.cc/post/2018/intranet-penetration-frp/" title="内网穿透服务Frp">https://blog.crazylinux.cc/post/2018/intranet-penetration-frp/</a>
+      <strong>本文链接：</strong>
+      <a href="https://blog.crazylinux.cc/post/2018/intranet-penetration-frp/" title="内网穿透服务Frp">https://blog.crazylinux.cc/post/2018/intranet-penetration-frp/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -475,67 +414,50 @@
 </ul>
 </div>
 
-        
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
 
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
+  <div class="social-list">
 
-    <div class="social-list">
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
 
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="https://twitter.com/pengshp">
-            <span class="icon">
-              <i class="fab fa-twitter"></i>
-            </span>
-
-            <span class="label">Twitter</span>
-          </a>
-        </div>
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
-    </div>
+          <span class="label">RSS</span>
+        </a>
+      </div>
   </div>
+</div>
 
-
-      <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/post/2018/centos-ntpdate/" rel="prev" title="CentOS 时间同步">
-      <i class="fa fa-chevron-left"></i> CentOS 时间同步
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/post/2018/web-cache-proxy-polipo/" rel="next" title="Web 缓存代理服务器polipo">
-      Web 缓存代理服务器polipo <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/2018/centos-ntpdate/" rel="prev" title="CentOS 时间同步">
+                  <i class="fa fa-chevron-left"></i> CentOS 时间同步
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/2018/web-cache-proxy-polipo/" rel="next" title="Web 缓存代理服务器polipo">
+                  Web 缓存代理服务器polipo <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
-  
-  
-  
+</div>
 
 
 
-        </div>
-        
-    <div class="comments" id="valine-comments"></div>
+
+
+
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -544,7 +466,7 @@
       activeClass = localStorage.getItem('comments_active') || activeClass;
     }
     if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
       if (activeTab) {
         activeTab.click();
       }
@@ -553,46 +475,41 @@
   if (CONFIG.comments.storage) {
     window.addEventListener('tabs:click', event => {
       if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
+      const commentClass = event.target.classList[1];
       localStorage.setItem('comments_active', commentClass);
     });
   }
 </script>
+</div>
+  </main>
 
-      </div>
-    </main>
+  <footer class="footer">
+    <div class="footer-inner">
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
 
 <div class="copyright">
-  
   &copy; 2016 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">pengshp</span>
-    <span class="post-meta-divider">|</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
-      <i class="fa fa-chart-area"></i>
+      <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">60k</span>
-    <span class="post-meta-divider">|</span>
+    <span title="站点总字数">62k</span>
+  </span>
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">54 分钟</span>
+    <span title="站点阅读时长">56 分钟</span>
+  </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
-
-        
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -601,7 +518,6 @@
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
-    <span class="post-meta-divider">|</span>
     <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
@@ -611,50 +527,17 @@
       </span>
     </span>
 </div>
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
 
-  
-  <script src="/lib/anime.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-<script src="/js/bookmark.js"></script>
-
+    </div>
+  </footer>
 
   
-  <script>
-    (function(){
-      var bp = document.createElement('script');
-      var curProtocol = window.location.protocol.split(':')[0];
-      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(bp, s);
-    })();
-  </script>
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
+  
 
 
 
@@ -662,21 +545,11 @@
 
 
   
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-  
 
 
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    new Valine(Object.assign({
-      el  : '#valine-comments',
-      path: location.pathname,
-    }, {"enable":true,"appId":"DVyboNGqTwbmE8bIXWnuHSec-9Nh9j0Va","appKey":"MjcAKd3zkHmb6dfmX5DSo57h","placeholder":"留个言再走吧! 支持Markdown语法吆...","avatar":"wavatar","meta":["nick","mail","link"],"pageSize":10,"language":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null}
-    ));
-  }, window.Valine);
-});
-</script>
+
 
 </body>
 </html>

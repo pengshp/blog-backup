@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,18 +15,15 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  
-  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-
-  <meta name="description" content="Linux中很多服务需要进行时间同步，不然容易导致出错。本文介绍使用阿里云的时间服务器同步服务器的时间。">
+<meta name="description" content="Linux中很多服务需要进行时间同步，不然容易导致出错。本文介绍使用阿里云的时间服务器同步服务器的时间。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CentOS 时间同步">
 <meta property="og:url" content="https://blog.crazylinux.cc/post/2018/centos-ntpdate/index.html">
@@ -36,6 +35,7 @@
 <meta property="article:author" content="pengshp">
 <meta property="article:tag" content="CentOS">
 <meta name="twitter:card" content="summary">
+
 
 <link rel="canonical" href="https://blog.crazylinux.cc/post/2018/centos-ntpdate/">
 
@@ -49,23 +49,12 @@
     lang   : 'zh-CN'
   };
 </script>
-
-  <title>CentOS 时间同步 | Neal's Blog!</title>
+<title>CentOS 时间同步 | Neal's Blog!</title>
   
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82082919-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-82082919-1');
-      }
-    </script>
 
 
 
-
-
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "001a4dd9765d4058943d1aca09707093"}'></script>
 
   <noscript>
   <style>
@@ -105,18 +94,17 @@
 <link rel="alternate" href="/atom.xml" title="Neal's Blog!" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
-    <main class="main">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-        <div class="header-inner"><div class="site-brand-container">
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-        <span class="toggle-line toggle-line-first"></span>
-        <span class="toggle-line toggle-line-middle"></span>
-        <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
@@ -139,42 +127,14 @@
 
 
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
-
-  </li>
-        <li class="menu-item menu-item-guestbook">
-
-    <a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a></li>
+        <li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
   </ul>
 </nav>
 
@@ -182,12 +142,12 @@
 
 
 </div>
-          
+        
   
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
@@ -202,20 +162,21 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、安装软件"><span class="nav-number">1.</span> <span class="nav-text">1、安装软件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、时间同步服务器"><span class="nav-number">2.</span> <span class="nav-text">2、时间同步服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、同步时间"><span class="nav-number">3.</span> <span class="nav-text">3、同步时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、加入计划任务"><span class="nav-number">4.</span> <span class="nav-text">4、加入计划任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用chrony同步时间"><span class="nav-number"></span> <span class="nav-text">使用chrony同步时间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-修改配置文件"><span class="nav-number">1.</span> <span class="nav-text">1. 修改配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-启动服务"><span class="nav-number">2.</span> <span class="nav-text">2. 启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-查看状态"><span class="nav-number">3.</span> <span class="nav-text">3. 查看状态</span></a></li></ol></div>
-      </section>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">1、安装软件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">2、时间同步服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E5%90%8C%E6%AD%A5%E6%97%B6%E9%97%B4"><span class="nav-number">3.</span> <span class="nav-text">3、同步时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E5%8A%A0%E5%85%A5%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1"><span class="nav-number">4.</span> <span class="nav-text">4、加入计划任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8chrony%E5%90%8C%E6%AD%A5%E6%97%B6%E9%97%B4"><span class="nav-number"></span> <span class="nav-text">使用chrony同步时间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">1. 修改配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">2. 启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9F%A5%E7%9C%8B%E7%8A%B6%E6%80%81"><span class="nav-number">3.</span> <span class="nav-text">3. 查看状态</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="pengshp"
       src="/images/me.png">
   <p class="site-author-name" itemprop="name">pengshp</p>
   <div class="site-description" itemprop="description">2B的世界NB的活着!</div>
 </div>
-<div class="site-state-wrap animated">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
@@ -238,7 +199,7 @@
       </div>
   </nav>
 </div>
-  <div class="links-of-author animated">
+  <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/pengshp" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
@@ -248,13 +209,10 @@
       <span class="links-of-author-item">
         <a href="https://twitter.com/pengshp" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
       </span>
-      <span class="links-of-author-item">
-        <a href="https://instagram.com/pengshp" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
-      </span>
   </div>
 
 
-  <div class="links-of-blogroll animated">
+  <div class="links-of-blogroll site-overview-item animated">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
       友链
     </div>
@@ -292,37 +250,37 @@
     </ul>
   </div>
 
-      </section>
+        </div>
+      </div>
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </header>
+    </header>
 
-      
-  <div class="back-to-top">
+    
+  <div class="back-to-top" role="button">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
-  <div class="reading-progress-bar"></div>
-  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 <noscript>
-  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
 
 
-      <div class="main-inner">
-        
+    <div class="main-inner post posts-expand">
 
-        <div class="content post posts-expand">
-          
 
-    
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2018/centos-ntpdate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -339,68 +297,51 @@
           CentOS 时间同步
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-31 13:49:41" itemprop="dateCreated datePublished" datetime="2018-01-31T13:49:41+08:00">2018-01-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-08 12:27:07" itemprop="dateModified" datetime="2021-01-08T12:27:07+08:00">2021-01-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/centos/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/post/2018/centos-ntpdate/" class="post-meta-item leancloud_visitors" data-flag-title="CentOS 时间同步" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/2018/centos-ntpdate/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/2018/centos-ntpdate/" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-31 13:49:41" itemprop="dateCreated datePublished" datetime="2018-01-31T13:49:41+08:00">2018-01-31</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-01-08 12:27:07" itemprop="dateModified" datetime="2021-01-08T12:27:07+08:00">2021-01-08</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/centos/" itemprop="url" rel="index"><span itemprop="name">CentOS</span></a>
+        </span>
+    </span>
+
   
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>811</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>811</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -409,26 +350,25 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>Linux中很多服务需要进行时间同步，不然容易导致出错。本文介绍使用阿里云的时间服务器同步服务器的时间。</p>
 <a id="more"></a>
 
-<h3 id="1、安装软件"><a href="#1、安装软件" class="headerlink" title="1、安装软件"></a>1、安装软件</h3><pre><code>$ yum install -y ntpdate</code></pre><h3 id="2、时间同步服务器"><a href="#2、时间同步服务器" class="headerlink" title="2、时间同步服务器"></a>2、时间同步服务器</h3><p>可用的时间同步服务器，阿里提供了一些NTP时间服务器可以用于从互联网中同步服务器的时间；</p>
+<h3 id="1、安装软件"><a href="#1、安装软件" class="headerlink" title="1、安装软件"></a>1、安装软件</h3><pre><code>$ yum install -y ntpdate</code></pre>
+<h3 id="2、时间同步服务器"><a href="#2、时间同步服务器" class="headerlink" title="2、时间同步服务器"></a>2、时间同步服务器</h3><p>可用的时间同步服务器，阿里提供了一些NTP时间服务器可以用于从互联网中同步服务器的时间；</p>
 <blockquote>
 <p>ntp1.aliyun.com<br>  ntp2.aliyun.com<br>  ntp3.aliyun.com<br>  ntp4.aliyun.com<br>  ntp5.aliyun.com<br>  ntp6.aliyun.com<br>  ntp7.aliyun.com</p>
 </blockquote>
 <h3 id="3、同步时间"><a href="#3、同步时间" class="headerlink" title="3、同步时间"></a>3、同步时间</h3><p>从上面的时间同步服务器中选择一个进行时间同步。</p>
-<pre><code>$ ntpdate -u ntp1.aliyun.com</code></pre><h3 id="4、加入计划任务"><a href="#4、加入计划任务" class="headerlink" title="4、加入计划任务"></a>4、加入计划任务</h3><p>可以把时间同步加入系统的计划任务，定时从互联网同步时间</p>
+<pre><code>$ ntpdate -u ntp1.aliyun.com</code></pre>
+<h3 id="4、加入计划任务"><a href="#4、加入计划任务" class="headerlink" title="4、加入计划任务"></a>4、加入计划任务</h3><p>可以把时间同步加入系统的计划任务，定时从互联网同步时间</p>
 <pre><code>$ crontab -e
 * */2 * * * ntpdate -u ntp1.aliyun.com &amp;&gt; /dev/null
 # 每两个小时同步一次时间
 $ systemctl start crond
-$ systemctl enable crond</code></pre><p>​    </p>
+$ systemctl enable crond</code></pre>
+<p>​    </p>
 <h2 id="使用chrony同步时间"><a href="#使用chrony同步时间" class="headerlink" title="使用chrony同步时间"></a>使用chrony同步时间</h2><h3 id="1-修改配置文件"><a href="#1-修改配置文件" class="headerlink" title="1. 修改配置文件"></a>1. 修改配置文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[xdl@CentOS] ~$ sudo vim /etc/chrony.conf</span><br><span class="line">pool ntp1.aliyun.com iburst</span><br></pre></td></tr></table></figure>
-
 <h3 id="2-启动服务"><a href="#2-启动服务" class="headerlink" title="2. 启动服务"></a>2. 启动服务</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[xdl@CentOS] ~$ sudo systemctl enable --now chronyd.service</span><br></pre></td></tr></table></figure>
-
 <h3 id="3-查看状态"><a href="#3-查看状态" class="headerlink" title="3. 查看状态"></a>3. 查看状态</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[xdl@CentOS] ~$ chronyc sources</span><br><span class="line">210 Number of sources = 1</span><br><span class="line">MS Name/IP address         Stratum Poll Reach LastRx Last sample</span><br><span class="line">===============================================================================</span><br><span class="line">^* 120.25.115.20                 2   6    37    64   -285us[-4209us] +/-   12ms</span><br></pre></td></tr></table></figure>
 
 
@@ -436,42 +376,41 @@ $ systemctl enable crond</code></pre><p>​    </p>
 
 
 
-
     </div>
 
     
     
     
-        <div class="reward-container">
-  <div>如果对你有帮助,请我喝杯奶茶吧!</div>
-  <button onclick="document.getElementById('post-reward').classList.toggle('active');">
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
     赞赏
   </button>
-  <div id="post-reward">
-      
+  <div class="post-reward">
       <div>
         <img src="/images/wechatpay.png" alt="pengshp 微信">
-        <p>微信</p>
+        <span>微信</span>
       </div>
-      
       <div>
-        <img src="/images/alipay.jpg" alt="pengshp 支付宝">
-        <p>支付宝</p>
+        <img src="/images/alipay.png" alt="pengshp 支付宝">
+        <span>支付宝</span>
       </div>
 
   </div>
 </div>
 
-        
+          
 
-<div>
-<ul class="post-copyright">
+<div class="post-copyright">
+<ul>
   <li class="post-copyright-author">
-    <strong>本文作者： </strong>pengshp
+      <strong>本文作者： </strong>pengshp
   </li>
   <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="https://blog.crazylinux.cc/post/2018/centos-ntpdate/" title="CentOS 时间同步">https://blog.crazylinux.cc/post/2018/centos-ntpdate/</a>
+      <strong>本文链接：</strong>
+      <a href="https://blog.crazylinux.cc/post/2018/centos-ntpdate/" title="CentOS 时间同步">https://blog.crazylinux.cc/post/2018/centos-ntpdate/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -479,67 +418,50 @@ $ systemctl enable crond</code></pre><p>​    </p>
 </ul>
 </div>
 
-        
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
 
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
+  <div class="social-list">
 
-    <div class="social-list">
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
 
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="https://twitter.com/pengshp">
-            <span class="icon">
-              <i class="fab fa-twitter"></i>
-            </span>
-
-            <span class="label">Twitter</span>
-          </a>
-        </div>
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
-    </div>
+          <span class="label">RSS</span>
+        </a>
+      </div>
   </div>
+</div>
 
-
-      <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/centos/" rel="tag"><i class="fa fa-tag"></i> CentOS</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/post/2018/pipenv-guide/" rel="prev" title="Pipenv 使用指南">
-      <i class="fa fa-chevron-left"></i> Pipenv 使用指南
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/post/2018/intranet-penetration-frp/" rel="next" title="内网穿透服务Frp">
-      内网穿透服务Frp <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/2018/pipenv-guide/" rel="prev" title="Pipenv 使用指南">
+                  <i class="fa fa-chevron-left"></i> Pipenv 使用指南
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/2018/intranet-penetration-frp/" rel="next" title="内网穿透服务Frp">
+                  内网穿透服务Frp <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
-  
-  
-  
+</div>
 
 
 
-        </div>
-        
-    <div class="comments" id="valine-comments"></div>
+
+
+
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -548,7 +470,7 @@ $ systemctl enable crond</code></pre><p>​    </p>
       activeClass = localStorage.getItem('comments_active') || activeClass;
     }
     if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
       if (activeTab) {
         activeTab.click();
       }
@@ -557,46 +479,41 @@ $ systemctl enable crond</code></pre><p>​    </p>
   if (CONFIG.comments.storage) {
     window.addEventListener('tabs:click', event => {
       if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
+      const commentClass = event.target.classList[1];
       localStorage.setItem('comments_active', commentClass);
     });
   }
 </script>
+</div>
+  </main>
 
-      </div>
-    </main>
+  <footer class="footer">
+    <div class="footer-inner">
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
 
 <div class="copyright">
-  
   &copy; 2016 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">pengshp</span>
-    <span class="post-meta-divider">|</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
-      <i class="fa fa-chart-area"></i>
+      <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">60k</span>
-    <span class="post-meta-divider">|</span>
+    <span title="站点总字数">62k</span>
+  </span>
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">54 分钟</span>
+    <span title="站点阅读时长">56 分钟</span>
+  </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
-
-        
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -605,7 +522,6 @@ $ systemctl enable crond</code></pre><p>​    </p>
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
-    <span class="post-meta-divider">|</span>
     <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
@@ -615,50 +531,17 @@ $ systemctl enable crond</code></pre><p>​    </p>
       </span>
     </span>
 </div>
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
 
-  
-  <script src="/lib/anime.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-<script src="/js/bookmark.js"></script>
-
+    </div>
+  </footer>
 
   
-  <script>
-    (function(){
-      var bp = document.createElement('script');
-      var curProtocol = window.location.protocol.split(':')[0];
-      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(bp, s);
-    })();
-  </script>
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
+  
 
 
 
@@ -666,21 +549,11 @@ $ systemctl enable crond</code></pre><p>​    </p>
 
 
   
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-  
 
 
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    new Valine(Object.assign({
-      el  : '#valine-comments',
-      path: location.pathname,
-    }, {"enable":true,"appId":"DVyboNGqTwbmE8bIXWnuHSec-9Nh9j0Va","appKey":"MjcAKd3zkHmb6dfmX5DSo57h","placeholder":"留个言再走吧! 支持Markdown语法吆...","avatar":"wavatar","meta":["nick","mail","link"],"pageSize":10,"language":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null}
-    ));
-  }, window.Valine);
-});
-</script>
+
 
 </body>
 </html>

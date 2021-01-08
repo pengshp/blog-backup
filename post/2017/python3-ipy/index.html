@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.1">
+<meta name="generator" content="Hexo 5.3.0">
+
+
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,18 +15,15 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-  
-  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-minimal.min.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js"></script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
 
 <script class="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","scheme":"Pisces","version":"8.0.0-rc.4","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}}};
+    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-
-  <meta name="description" content="IP 地址规划是网络设计中很重要的一个环节，在此过程中，免不了要计算大量的IP 地址，包括网段、子网掩码、广播地址、子网数、IP类型等。Python 提供了一个强大的第三方模块IPy,可以辅助我们高效的完成 IP 的规划工作。">
+<meta name="description" content="IP 地址规划是网络设计中很重要的一个环节，在此过程中，免不了要计算大量的IP 地址，包括网段、子网掩码、广播地址、子网数、IP类型等。Python 提供了一个强大的第三方模块IPy,可以辅助我们高效的完成 IP 的规划工作。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python 的 IP 地址处理模块 IPy">
 <meta property="og:url" content="https://blog.crazylinux.cc/post/2017/python3-ipy/index.html">
@@ -36,6 +35,7 @@
 <meta property="article:author" content="pengshp">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
+
 
 <link rel="canonical" href="https://blog.crazylinux.cc/post/2017/python3-ipy/">
 
@@ -49,23 +49,12 @@
     lang   : 'zh-CN'
   };
 </script>
-
-  <title>Python 的 IP 地址处理模块 IPy | Neal's Blog!</title>
+<title>Python 的 IP 地址处理模块 IPy | Neal's Blog!</title>
   
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-82082919-1"></script>
-    <script>
-      if (CONFIG.hostname === location.hostname) {
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-82082919-1');
-      }
-    </script>
 
 
 
-
-
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "001a4dd9765d4058943d1aca09707093"}'></script>
 
   <noscript>
   <style>
@@ -105,18 +94,17 @@
 <link rel="alternate" href="/atom.xml" title="Neal's Blog!" type="application/atom+xml">
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
 
-    <main class="main">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-        <div class="header-inner"><div class="site-brand-container">
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-        <span class="toggle-line toggle-line-first"></span>
-        <span class="toggle-line toggle-line-middle"></span>
-        <span class="toggle-line toggle-line-last"></span>
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
     </div>
   </div>
 
@@ -139,42 +127,14 @@
 
 
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a>
-
-  </li>
-        <li class="menu-item menu-item-categories">
-
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a>
-
-  </li>
-        <li class="menu-item menu-item-tags">
-
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a>
-
-  </li>
-        <li class="menu-item menu-item-guestbook">
-
-    <a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a>
-
-  </li>
-        <li class="menu-item menu-item-about">
-
-    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
-
-  </li>
-        <li class="menu-item menu-item-commonweal">
-
-    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
-
-  </li>
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">47</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a></li>
+        <li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
   </ul>
 </nav>
 
@@ -182,12 +142,12 @@
 
 
 </div>
-          
+        
   
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
   </div>
 
   <aside class="sidebar">
@@ -202,20 +162,21 @@
         </li>
       </ul>
 
-      <!--noindex-->
-      <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、安装-IPy-模块"><span class="nav-number">1.</span> <span class="nav-text">1、安装 IPy 模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、IP-地址、网段的基本数理"><span class="nav-number">2.</span> <span class="nav-text">2、IP 地址、网段的基本数理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、多网络计算方法"><span class="nav-number">3.</span> <span class="nav-text">3、多网络计算方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、综合应用"><span class="nav-number">4.</span> <span class="nav-text">4、综合应用</span></a></li></ol></div>
-      </section>
-      <!--/noindex-->
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85-IPy-%E6%A8%A1%E5%9D%97"><span class="nav-number">1.</span> <span class="nav-text">1、安装 IPy 模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81IP-%E5%9C%B0%E5%9D%80%E3%80%81%E7%BD%91%E6%AE%B5%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%95%B0%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">2、IP 地址、网段的基本数理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E5%A4%9A%E7%BD%91%E7%BB%9C%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">3、多网络计算方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%E3%80%81%E7%BB%BC%E5%90%88%E5%BA%94%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">4、综合应用</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
 
-      <section class="site-overview-wrap sidebar-panel">
-        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="pengshp"
       src="/images/me.png">
   <p class="site-author-name" itemprop="name">pengshp</p>
   <div class="site-description" itemprop="description">2B的世界NB的活着!</div>
 </div>
-<div class="site-state-wrap animated">
+<div class="site-state-wrap site-overview-item animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
@@ -238,7 +199,7 @@
       </div>
   </nav>
 </div>
-  <div class="links-of-author animated">
+  <div class="links-of-author site-overview-item animated">
       <span class="links-of-author-item">
         <a href="https://github.com/pengshp" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
@@ -248,13 +209,10 @@
       <span class="links-of-author-item">
         <a href="https://twitter.com/pengshp" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
       </span>
-      <span class="links-of-author-item">
-        <a href="https://instagram.com/pengshp" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
-      </span>
   </div>
 
 
-  <div class="links-of-blogroll animated">
+  <div class="links-of-blogroll site-overview-item animated">
     <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
       友链
     </div>
@@ -292,37 +250,37 @@
     </ul>
   </div>
 
-      </section>
+        </div>
+      </div>
     </div>
   </aside>
-  <div id="sidebar-dimmer"></div>
+  <div class="sidebar-dimmer"></div>
 
 
-      </header>
+    </header>
 
-      
-  <div class="back-to-top">
+    
+  <div class="back-to-top" role="button">
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
-  <div class="reading-progress-bar"></div>
-  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
 
 <noscript>
-  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
 
 
-      <div class="main-inner">
-        
+    <div class="main-inner post posts-expand">
 
-        <div class="content post posts-expand">
-          
 
-    
+  
+
+
+<div class="post-block">
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2017/python3-ipy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -339,68 +297,51 @@
           Python 的 IP 地址处理模块 IPy
         </h1>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-29 09:18:32" itemprop="dateCreated datePublished" datetime="2017-12-29T09:18:32+08:00">2017-12-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-            <span id="/post/2017/python3-ipy/" class="post-meta-item leancloud_visitors" data-flag-title="Python 的 IP 地址处理模块 IPy" title="阅读次数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-eye"></i>
-              </span>
-              <span class="post-meta-item-text">阅读次数：</span>
-              <span class="leancloud-visitors-count"></span>
-            </span>
-  
-  <span class="post-meta-item">
-    
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
       <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
+        <i class="far fa-calendar"></i>
       </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/2017/python3-ipy/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/2017/python3-ipy/" itemprop="commentCount"></span>
-    </a>
-  </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-12-29 09:18:32" itemprop="dateCreated datePublished" datetime="2017-12-29T09:18:32+08:00">2017-12-29</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
   
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
 
         </div>
       </header>
@@ -409,34 +350,25 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>IP 地址规划是网络设计中很重要的一个环节，在此过程中，免不了要计算大量的IP 地址，包括网段、子网掩码、广播地址、子网数、IP类型等。Python 提供了一个强大的第三方模块<code>IPy</code>,可以辅助我们高效的完成 IP 的规划工作。</p>
 <a id="more"></a>
-<h4 id="1、安装-IPy-模块"><a href="#1、安装-IPy-模块" class="headerlink" title="1、安装 IPy 模块"></a>1、安装 IPy 模块</h4><pre><code>pip3 install ipy</code></pre><h4 id="2、IP-地址、网段的基本数理"><a href="#2、IP-地址、网段的基本数理" class="headerlink" title="2、IP 地址、网段的基本数理"></a>2、IP 地址、网段的基本数理</h4><p>IPy 模块包含一个<code>IP</code>类,可以方便的处理绝大部分格式为 <code>IPv4</code> 和 <code>IPv6</code> 格式的网络和地址。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'10.0.0.0/8'</span>).version()</span><br><span class="line"><span class="number">4</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'::1'</span>).version()</span><br><span class="line"><span class="number">6</span></span><br></pre></td></tr></table></figure>
-
+<h4 id="1、安装-IPy-模块"><a href="#1、安装-IPy-模块" class="headerlink" title="1、安装 IPy 模块"></a>1、安装 IPy 模块</h4><pre><code>pip3 install ipy</code></pre>
+<h4 id="2、IP-地址、网段的基本数理"><a href="#2、IP-地址、网段的基本数理" class="headerlink" title="2、IP 地址、网段的基本数理"></a>2、IP 地址、网段的基本数理</h4><p>IPy 模块包含一个<code>IP</code>类,可以方便的处理绝大部分格式为 <code>IPv4</code> 和 <code>IPv6</code> 格式的网络和地址。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;10.0.0.0/8&#x27;</span>).version()</span><br><span class="line"><span class="number">4</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;::1&#x27;</span>).version()</span><br><span class="line"><span class="number">6</span></span><br></pre></td></tr></table></figure>
 <p>通过指定的网段输出该网段的IP个数及所有的IP地址清单</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip=IP(<span class="string">'192.168.22.0/24'</span>)</span><br><span class="line">print(ip.len())</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> ip:</span><br><span class="line">    print(x)</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip=IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>)</span><br><span class="line">print(ip.<span class="built_in">len</span>())</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> ip:</span><br><span class="line">    print(x)</span><br></pre></td></tr></table></figure>
 <p>反向地址解析,IP类型，IP转换</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip = IP(<span class="string">'192.168.22.167'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip.reverseNames()      <span class="comment">#反向解析</span></span><br><span class="line">[<span class="string">'167.22.168.192.in-addr.arpa.'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip.iptype()</span><br><span class="line"><span class="string">'PRIVATE'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'8.8.8.8'</span>).iptype() <span class="comment">#8.8.8.8位公网</span></span><br><span class="line"><span class="string">'PUBLIC'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'8.8.8.8'</span>).int()    <span class="comment">#转为整型格式</span></span><br><span class="line"><span class="number">134744072</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'8.8.8.8'</span>).strHex() <span class="comment">#转为十六进制</span></span><br><span class="line"><span class="string">'0x8080808'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'8.8.8.8'</span>).strBin() <span class="comment">#转为二进制</span></span><br><span class="line"><span class="string">'00001000000010000000100000001000'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(IP(<span class="number">0x8080808</span>))</span><br><span class="line"><span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip = IP(<span class="string">&#x27;192.168.22.167&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip.reverseNames()      <span class="comment">#反向解析</span></span><br><span class="line">[<span class="string">&#x27;167.22.168.192.in-addr.arpa.&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip.iptype()</span><br><span class="line"><span class="string">&#x27;PRIVATE&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).iptype() <span class="comment">#8.8.8.8位公网</span></span><br><span class="line"><span class="string">&#x27;PUBLIC&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).<span class="built_in">int</span>()    <span class="comment">#转为整型格式</span></span><br><span class="line"><span class="number">134744072</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).strHex() <span class="comment">#转为十六进制</span></span><br><span class="line"><span class="string">&#x27;0x8080808&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).strBin() <span class="comment">#转为二进制</span></span><br><span class="line"><span class="string">&#x27;00001000000010000000100000001000&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(IP(<span class="number">0x8080808</span>))</span><br><span class="line"><span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span></span><br></pre></td></tr></table></figure>
 <p>IP 方法也支持网络地址的转换，如IP和掩码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip=IP(<span class="string">'192.168.22.0/255.255.255.0'</span>,make_net=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(ip)</span><br><span class="line"><span class="number">192.168</span><span class="number">.22</span><span class="number">.0</span>/<span class="number">24</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip=IP(<span class="string">&#x27;192.168.22.0/255.255.255.0&#x27;</span>,make_net=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(ip)</span><br><span class="line"><span class="number">192.168</span><span class="number">.22</span><span class="number">.0</span>/<span class="number">24</span></span><br></pre></td></tr></table></figure>
 <p>通过strNormal方法指定不同参数值以定制不同输出类型的网段，输出类型为字符串。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.22.0/24'</span>).strNormal(<span class="number">0</span>)</span><br><span class="line"><span class="string">'192.168.22.0'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.22.0/24'</span>).strNormal(<span class="number">1</span>)</span><br><span class="line"><span class="string">'192.168.22.0/24'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.22.0/24'</span>).strNormal(<span class="number">2</span>)</span><br><span class="line"><span class="string">'192.168.22.0/255.255.255.0'</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.22.0/24'</span>).strNormal(<span class="number">3</span>)</span><br><span class="line"><span class="string">'192.168.22.0-192.168.22.255'</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">0</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">1</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0/24&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">2</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0/255.255.255.0&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">3</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0-192.168.22.255&#x27;</span></span><br></pre></td></tr></table></figure>
 <h4 id="3、多网络计算方法"><a href="#3、多网络计算方法" class="headerlink" title="3、多网络计算方法"></a>3、多网络计算方法</h4><p>判断IP地址和网段是否包含于同一网段中</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">'192.168.22.100'</span> <span class="keyword">in</span> IP(<span class="string">'192.168.22.0/24'</span>)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.22.0/24'</span>) <span class="keyword">in</span> IP(<span class="string">'192.168.0.0/16'</span>)</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">&#x27;192.168.22.100&#x27;</span> <span class="keyword">in</span> IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>) <span class="keyword">in</span> IP(<span class="string">&#x27;192.168.0.0/16&#x27;</span>)</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
 <p>判断两个网段是否存在重叠，采用IPy 提供的 <code>overlaps</code> 方法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.0.0/23'</span>).overlaps(<span class="string">'192.168.1.0/24'</span>)</span><br><span class="line"><span class="number">1</span>   <span class="comment">#返回1代表存在重叠</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">'192.168.0.0/23'</span>).overlaps(<span class="string">'192.168.22.0/24'</span>)</span><br><span class="line"><span class="number">0</span>   <span class="comment">#返回0代表不存在重叠</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.0.0/23&#x27;</span>).overlaps(<span class="string">&#x27;192.168.1.0/24&#x27;</span>)</span><br><span class="line"><span class="number">1</span>   <span class="comment">#返回1代表存在重叠</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.0.0/23&#x27;</span>).overlaps(<span class="string">&#x27;192.168.22.0/24&#x27;</span>)</span><br><span class="line"><span class="number">0</span>   <span class="comment">#返回0代表不存在重叠</span></span><br></pre></td></tr></table></figure>
 <h4 id="4、综合应用"><a href="#4、综合应用" class="headerlink" title="4、综合应用"></a>4、综合应用</h4><p>一个自动识别IP地址、子网、方向解析、IP类型的脚本</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip_s = input(‘请输入IP地址或者网段地址: ‘)</span><br><span class="line">ips = IP(ip_s)   <span class="comment">#定义元素</span></span><br><span class="line"><span class="keyword">if</span> len(ips) &gt; <span class="number">1</span>:  <span class="comment">#如果len出来的数字大于1，那么就是一个网段</span></span><br><span class="line">4print(‘网络地址: %s’ % ips.net())</span><br><span class="line">4print(‘子网掩码: %s’ % ips.netmask())</span><br><span class="line">4print(‘网络广播地址: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘网络子网数: %s’ % len(ips))</span><br><span class="line"><span class="keyword">else</span>:   <span class="comment">###否则就是一个地址</span></span><br><span class="line">4print(‘IP反向解析: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘十六进制地址: %s’ % ips.strHex())</span><br><span class="line">4print(‘二进制地址: %s’ % ips.strBin())</span><br><span class="line">4print(‘地址类型: %s’ % ips.iptype())</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip_s = <span class="built_in">input</span>(‘请输入IP地址或者网段地址: ‘)</span><br><span class="line">ips = IP(ip_s)   <span class="comment">#定义元素</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(ips) &gt; <span class="number">1</span>:  <span class="comment">#如果len出来的数字大于1，那么就是一个网段</span></span><br><span class="line">4print(‘网络地址: %s’ % ips.net())</span><br><span class="line">4print(‘子网掩码: %s’ % ips.netmask())</span><br><span class="line">4print(‘网络广播地址: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘网络子网数: %s’ % <span class="built_in">len</span>(ips))</span><br><span class="line"><span class="keyword">else</span>:   <span class="comment">###否则就是一个地址</span></span><br><span class="line">4print(‘IP反向解析: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘十六进制地址: %s’ % ips.strHex())</span><br><span class="line">4print(‘二进制地址: %s’ % ips.strBin())</span><br><span class="line">4print(‘地址类型: %s’ % ips.iptype())</span><br></pre></td></tr></table></figure>
 
 
 
@@ -445,36 +377,36 @@
     
     
     
-        <div class="reward-container">
-  <div>如果对你有帮助,请我喝杯奶茶吧!</div>
-  <button onclick="document.getElementById('post-reward').classList.toggle('active');">
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
     赞赏
   </button>
-  <div id="post-reward">
-      
+  <div class="post-reward">
       <div>
         <img src="/images/wechatpay.png" alt="pengshp 微信">
-        <p>微信</p>
+        <span>微信</span>
       </div>
-      
       <div>
-        <img src="/images/alipay.jpg" alt="pengshp 支付宝">
-        <p>支付宝</p>
+        <img src="/images/alipay.png" alt="pengshp 支付宝">
+        <span>支付宝</span>
       </div>
 
   </div>
 </div>
 
-        
+          
 
-<div>
-<ul class="post-copyright">
+<div class="post-copyright">
+<ul>
   <li class="post-copyright-author">
-    <strong>本文作者： </strong>pengshp
+      <strong>本文作者： </strong>pengshp
   </li>
   <li class="post-copyright-link">
-    <strong>本文链接：</strong>
-    <a href="https://blog.crazylinux.cc/post/2017/python3-ipy/" title="Python 的 IP 地址处理模块 IPy">https://blog.crazylinux.cc/post/2017/python3-ipy/</a>
+      <strong>本文链接：</strong>
+      <a href="https://blog.crazylinux.cc/post/2017/python3-ipy/" title="Python 的 IP 地址处理模块 IPy">https://blog.crazylinux.cc/post/2017/python3-ipy/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -482,67 +414,50 @@
 </ul>
 </div>
 
-        
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
 
-  <div class="followme">
-    <p>欢迎关注我的其它发布渠道</p>
+  <div class="social-list">
 
-    <div class="social-list">
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
 
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="https://twitter.com/pengshp">
-            <span class="icon">
-              <i class="fab fa-twitter"></i>
-            </span>
-
-            <span class="label">Twitter</span>
-          </a>
-        </div>
-
-        <div class="social-item">
-          <a target="_blank" class="social-link" href="/atom.xml">
-            <span class="icon">
-              <i class="fa fa-rss"></i>
-            </span>
-
-            <span class="label">RSS</span>
-          </a>
-        </div>
-    </div>
+          <span class="label">RSS</span>
+        </a>
+      </div>
   </div>
+</div>
 
-
-      <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
           </div>
 
         
 
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/post/2017/python-send-mail/" rel="prev" title="Python 发送电子邮件">
-      <i class="fa fa-chevron-left"></i> Python 发送电子邮件
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/post/2018/pipenv-guide/" rel="next" title="Pipenv 使用指南">
-      Pipenv 使用指南 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/2017/python-send-mail/" rel="prev" title="Python 发送电子邮件">
+                  <i class="fa fa-chevron-left"></i> Python 发送电子邮件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/2018/pipenv-guide/" rel="next" title="Pipenv 使用指南">
+                  Pipenv 使用指南 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
-  
-  
-  
+</div>
 
 
 
-        </div>
-        
-    <div class="comments" id="valine-comments"></div>
+
+
+
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -551,7 +466,7 @@
       activeClass = localStorage.getItem('comments_active') || activeClass;
     }
     if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
       if (activeTab) {
         activeTab.click();
       }
@@ -560,46 +475,41 @@
   if (CONFIG.comments.storage) {
     window.addEventListener('tabs:click', event => {
       if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
+      const commentClass = event.target.classList[1];
       localStorage.setItem('comments_active', commentClass);
     });
   }
 </script>
+</div>
+  </main>
 
-      </div>
-    </main>
+  <footer class="footer">
+    <div class="footer-inner">
 
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
 
 <div class="copyright">
-  
   &copy; 2016 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">pengshp</span>
-    <span class="post-meta-divider">|</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
-      <i class="fa fa-chart-area"></i>
+      <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">60k</span>
-    <span class="post-meta-divider">|</span>
+    <span title="站点总字数">62k</span>
+  </span>
+  <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">54 分钟</span>
+    <span title="站点阅读时长">56 分钟</span>
+  </span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
-  </div>
-
-        
 <div class="busuanzi-count">
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-user"></i>
@@ -608,7 +518,6 @@
         <span id="busuanzi_value_site_uv"></span>
       </span>
     </span>
-    <span class="post-meta-divider">|</span>
     <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
       <span class="post-meta-item-icon">
         <i class="fa fa-eye"></i>
@@ -618,50 +527,17 @@
       </span>
     </span>
 </div>
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
 
-  
-  <script src="/lib/anime.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-<script src="/js/bookmark.js"></script>
-
+    </div>
+  </footer>
 
   
-  <script>
-    (function(){
-      var bp = document.createElement('script');
-      var curProtocol = window.location.protocol.split(':')[0];
-      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
-      var s = document.getElementsByTagName("script")[0];
-      s.parentNode.insertBefore(bp, s);
-    })();
-  </script>
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
-
-
-
-
-
-
-
-
+  
 
 
 
@@ -669,21 +545,11 @@
 
 
   
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-  
 
 
-<script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
-    new Valine(Object.assign({
-      el  : '#valine-comments',
-      path: location.pathname,
-    }, {"enable":true,"appId":"DVyboNGqTwbmE8bIXWnuHSec-9Nh9j0Va","appKey":"MjcAKd3zkHmb6dfmX5DSo57h","placeholder":"留个言再走吧! 支持Markdown语法吆...","avatar":"wavatar","meta":["nick","mail","link"],"pageSize":10,"language":"zh-cn","visitor":true,"comment_count":true,"recordIP":true,"serverURLs":null}
-    ));
-  }, window.Valine);
-});
-</script>
+
 
 </body>
 </html>
