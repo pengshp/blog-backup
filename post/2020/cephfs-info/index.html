@@ -23,21 +23,23 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
   </script>
-<meta name="description" content="IP 地址规划是网络设计中很重要的一个环节，在此过程中，免不了要计算大量的IP 地址，包括网段、子网掩码、广播地址、子网数、IP类型等。Python 提供了一个强大的第三方模块IPy,可以辅助我们高效的完成 IP 的规划工作。">
+<meta name="description" content="Ceph 是一种使用广泛的分布式文件系统">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python 的 IP 地址处理模块 IPy">
-<meta property="og:url" content="https://blog.crazylinux.cc/post/2017/python3-ipy/index.html">
+<meta property="og:title" content="Ceph 分布式文件系统简介">
+<meta property="og:url" content="https://blog.crazylinux.cc/post/2020/cephfs-info/index.html">
 <meta property="og:site_name" content="Neal&#39;s Blog!">
-<meta property="og:description" content="IP 地址规划是网络设计中很重要的一个环节，在此过程中，免不了要计算大量的IP 地址，包括网段、子网掩码、广播地址、子网数、IP类型等。Python 提供了一个强大的第三方模块IPy,可以辅助我们高效的完成 IP 的规划工作。">
+<meta property="og:description" content="Ceph 是一种使用广泛的分布式文件系统">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2017-12-29T01:18:32.000Z">
-<meta property="article:modified_time" content="2020-07-16T13:30:15.376Z">
+<meta property="og:image" content="https://pengshp.coding.net/p/images/d/images/git/raw/master/blog-ceph-intr.jpg">
+<meta property="article:published_time" content="2020-08-17T09:48:54.000Z">
+<meta property="article:modified_time" content="2021-01-18T11:03:23.509Z">
 <meta property="article:author" content="pengshp">
-<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pengshp.coding.net/p/images/d/images/git/raw/master/blog-ceph-intr.jpg">
 
 
-<link rel="canonical" href="https://blog.crazylinux.cc/post/2017/python3-ipy/">
+<link rel="canonical" href="https://blog.crazylinux.cc/post/2020/cephfs-info/">
 
 
 <script class="page-configurations">
@@ -49,7 +51,7 @@
     lang   : 'zh-CN'
   };
 </script>
-<title>Python 的 IP 地址处理模块 IPy | Neal's Blog!</title>
+<title>Ceph 分布式文件系统简介 | Neal's Blog!</title>
   
 
 
@@ -165,7 +167,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85-IPy-%E6%A8%A1%E5%9D%97"><span class="nav-number">1.</span> <span class="nav-text">1、安装 IPy 模块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81IP-%E5%9C%B0%E5%9D%80%E3%80%81%E7%BD%91%E6%AE%B5%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%95%B0%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">2、IP 地址、网段的基本数理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E5%A4%9A%E7%BD%91%E7%BB%9C%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">3、多网络计算方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%E3%80%81%E7%BB%BC%E5%90%88%E5%BA%94%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">4、综合应用</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">存储分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text">本地文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.2.</span> <span class="nav-text">网络文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.3.</span> <span class="nav-text">分布式文件系统</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">分布式文件系统架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">分布式文件系统的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%97%E5%AD%98%E5%82%A8%E7%9A%84%E7%89%B9%E7%82%B9%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">块存储的特点：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8"><span class="nav-number">3.2.</span> <span class="nav-text">对象存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%EF%BC%9F"><span class="nav-number">3.2.1.</span> <span class="nav-text">为什么需要对象存储？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="nav-number">3.2.2.</span> <span class="nav-text">优点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9A-%E9%80%82%E5%90%88%E6%9B%B4%E6%96%B0%E5%8F%98%E5%8A%A8%E8%BE%83%E5%B0%91%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">3.2.3.</span> <span class="nav-text">使用场景： (适合更新变动较少的数据)</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -281,7 +283,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2017/python3-ipy/">
+    <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2020/cephfs-info/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/me.png">
@@ -294,7 +296,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Python 的 IP 地址处理模块 IPy
+          Ceph 分布式文件系统简介
         </h1>
 
         <div class="post-meta-container">
@@ -305,14 +307,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2017-12-29 09:18:32" itemprop="dateCreated datePublished" datetime="2017-12-29T09:18:32+08:00">2017-12-29</time>
+      <time title="创建时间：2020-08-17 17:48:54" itemprop="dateCreated datePublished" datetime="2020-08-17T17:48:54+08:00">2020-08-17</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-07-16 21:30:15" itemprop="dateModified" datetime="2020-07-16T21:30:15+08:00">2020-07-16</time>
+        <time title="修改时间：2021-01-18 19:03:23" itemprop="dateModified" datetime="2021-01-18T19:03:23+08:00">2021-01-18</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -320,7 +322,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
         </span>
     </span>
 
@@ -332,14 +334,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
+      <span>1.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>1 分钟</span>
     </span>
 </div>
 
@@ -350,27 +352,63 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>IP 地址规划是网络设计中很重要的一个环节，在此过程中，免不了要计算大量的IP 地址，包括网段、子网掩码、广播地址、子网数、IP类型等。Python 提供了一个强大的第三方模块<code>IPy</code>,可以辅助我们高效的完成 IP 的规划工作。</p>
+        <p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/blog-ceph-intr.jpg" alt="blog-ceph-intr"></p>
+<p>Ceph 是一种使用广泛的分布式文件系统</p>
 <a id="more"></a>
-<h4 id="1、安装-IPy-模块"><a href="#1、安装-IPy-模块" class="headerlink" title="1、安装 IPy 模块"></a>1、安装 IPy 模块</h4><pre><code>pip3 install ipy</code></pre>
-<h4 id="2、IP-地址、网段的基本数理"><a href="#2、IP-地址、网段的基本数理" class="headerlink" title="2、IP 地址、网段的基本数理"></a>2、IP 地址、网段的基本数理</h4><p>IPy 模块包含一个<code>IP</code>类,可以方便的处理绝大部分格式为 <code>IPv4</code> 和 <code>IPv6</code> 格式的网络和地址。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;10.0.0.0/8&#x27;</span>).version()</span><br><span class="line"><span class="number">4</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;::1&#x27;</span>).version()</span><br><span class="line"><span class="number">6</span></span><br></pre></td></tr></table></figure>
-<p>通过指定的网段输出该网段的IP个数及所有的IP地址清单</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip=IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>)</span><br><span class="line">print(ip.<span class="built_in">len</span>())</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> ip:</span><br><span class="line">    print(x)</span><br></pre></td></tr></table></figure>
-<p>反向地址解析,IP类型，IP转换</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip = IP(<span class="string">&#x27;192.168.22.167&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip.reverseNames()      <span class="comment">#反向解析</span></span><br><span class="line">[<span class="string">&#x27;167.22.168.192.in-addr.arpa.&#x27;</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip.iptype()</span><br><span class="line"><span class="string">&#x27;PRIVATE&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).iptype() <span class="comment">#8.8.8.8位公网</span></span><br><span class="line"><span class="string">&#x27;PUBLIC&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).<span class="built_in">int</span>()    <span class="comment">#转为整型格式</span></span><br><span class="line"><span class="number">134744072</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).strHex() <span class="comment">#转为十六进制</span></span><br><span class="line"><span class="string">&#x27;0x8080808&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;8.8.8.8&#x27;</span>).strBin() <span class="comment">#转为二进制</span></span><br><span class="line"><span class="string">&#x27;00001000000010000000100000001000&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(IP(<span class="number">0x8080808</span>))</span><br><span class="line"><span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span></span><br></pre></td></tr></table></figure>
-<p>IP 方法也支持网络地址的转换，如IP和掩码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>ip=IP(<span class="string">&#x27;192.168.22.0/255.255.255.0&#x27;</span>,make_net=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>print(ip)</span><br><span class="line"><span class="number">192.168</span><span class="number">.22</span><span class="number">.0</span>/<span class="number">24</span></span><br></pre></td></tr></table></figure>
-<p>通过strNormal方法指定不同参数值以定制不同输出类型的网段，输出类型为字符串。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">0</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">1</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0/24&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">2</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0/255.255.255.0&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>).strNormal(<span class="number">3</span>)</span><br><span class="line"><span class="string">&#x27;192.168.22.0-192.168.22.255&#x27;</span></span><br></pre></td></tr></table></figure>
-<h4 id="3、多网络计算方法"><a href="#3、多网络计算方法" class="headerlink" title="3、多网络计算方法"></a>3、多网络计算方法</h4><p>判断IP地址和网段是否包含于同一网段中</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">&#x27;192.168.22.100&#x27;</span> <span class="keyword">in</span> IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>)</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.22.0/24&#x27;</span>) <span class="keyword">in</span> IP(<span class="string">&#x27;192.168.0.0/16&#x27;</span>)</span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
-<p>判断两个网段是否存在重叠，采用IPy 提供的 <code>overlaps</code> 方法</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.0.0/23&#x27;</span>).overlaps(<span class="string">&#x27;192.168.1.0/24&#x27;</span>)</span><br><span class="line"><span class="number">1</span>   <span class="comment">#返回1代表存在重叠</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>IP(<span class="string">&#x27;192.168.0.0/23&#x27;</span>).overlaps(<span class="string">&#x27;192.168.22.0/24&#x27;</span>)</span><br><span class="line"><span class="number">0</span>   <span class="comment">#返回0代表不存在重叠</span></span><br></pre></td></tr></table></figure>
-<h4 id="4、综合应用"><a href="#4、综合应用" class="headerlink" title="4、综合应用"></a>4、综合应用</h4><p>一个自动识别IP地址、子网、方向解析、IP类型的脚本</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> IPy <span class="keyword">import</span> IP</span><br><span class="line">ip_s = <span class="built_in">input</span>(‘请输入IP地址或者网段地址: ‘)</span><br><span class="line">ips = IP(ip_s)   <span class="comment">#定义元素</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(ips) &gt; <span class="number">1</span>:  <span class="comment">#如果len出来的数字大于1，那么就是一个网段</span></span><br><span class="line">4print(‘网络地址: %s’ % ips.net())</span><br><span class="line">4print(‘子网掩码: %s’ % ips.netmask())</span><br><span class="line">4print(‘网络广播地址: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘网络子网数: %s’ % <span class="built_in">len</span>(ips))</span><br><span class="line"><span class="keyword">else</span>:   <span class="comment">###否则就是一个地址</span></span><br><span class="line">4print(‘IP反向解析: %s’ % ips.reverseNames() [<span class="number">0</span>])</span><br><span class="line">4print(‘十六进制地址: %s’ % ips.strHex())</span><br><span class="line">4print(‘二进制地址: %s’ % ips.strBin())</span><br><span class="line">4print(‘地址类型: %s’ % ips.iptype())</span><br></pre></td></tr></table></figure>
 
-
+<h1 id="存储分类"><a href="#存储分类" class="headerlink" title="存储分类"></a>存储分类</h1><h2 id="本地文件系统"><a href="#本地文件系统" class="headerlink" title="本地文件系统"></a>本地文件系统</h2><p>ntfs(wind)、ext2、ext3、ext4、xfs          </p>
+<p>ext2不带日志，3和4带有日志：文件系统的日志作用（防止机器突然断电）：所有的数据在给磁盘存数据之前会先给文件系统的日志里面存一份，防止机器突然断电之后数据没有存完，这样它还可以从日志里面重新将数据拷贝到磁盘。</p>
+<h2 id="网络文件系统"><a href="#网络文件系统" class="headerlink" title="网络文件系统"></a>网络文件系统</h2><p>nfs           网络文件系统–称之为nas存储（网络附加存储）</p>
+<h2 id="分布式文件系统"><a href="#分布式文件系统" class="headerlink" title="分布式文件系统"></a>分布式文件系统</h2><ul>
+<li><p>hdfs          分布式网络文件系统         </p>
+</li>
+<li><p>glusterfs     分布式网络文件系统，不需要管理服务器         </p>
+</li>
+<li><p>ceph          分布式网络文件系统，块存储，对象存储</p>
+</li>
+</ul>
+<h1 id="分布式文件系统架构"><a href="#分布式文件系统架构" class="headerlink" title="分布式文件系统架构"></a>分布式文件系统架构</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">client</span><br><span class="line">                          |</span><br><span class="line">                      namenode   </span><br><span class="line">                          |</span><br><span class="line">          ------------------------------------</span><br><span class="line">          |               |                  |</span><br><span class="line">        datanode        datanode            datanode</span><br></pre></td></tr></table></figure>
+<p>namenode 元数据服务器-管理服务器，存储这个文件的数据存放的位置信息</p>
+<p>datanode 存储数据，数据节点</p>
+<h1 id="分布式文件系统的特性"><a href="#分布式文件系统的特性" class="headerlink" title="分布式文件系统的特性"></a>分布式文件系统的特性</h1><ul>
+<li><p>可扩展         </p>
+<p>分布式存储系统可以扩展到几百台甚至几千台的集群规模，而且随着集群规模的增长，系统整体性能表现为线性增长。分布式存储的水平扩展有以下几个特性：           </p>
+<ol>
+<li><p>节点扩展后，旧数据会自动迁移到新节点，实现负载均衡，避免单点故障的情况出现;           </p>
+</li>
+<li><p>水平扩展只需要将新节点和原有集群连接到同一网络，整个过程不会对业务造成影响;          </p>
+</li>
+</ol>
+</li>
+<li><p>低成本         </p>
+<p>分布式存储系统的自动容错、自动负载均衡机制使其可以构建在普通的PC机之上。          </p>
+</li>
+<li><p>易管理         </p>
+<p>可通过一个简单的WEB界面就可以对整个系统进行配置管理，运维简便，极低的管理成本。</p>
+</li>
+</ul>
+<h2 id="块存储的特点："><a href="#块存储的特点：" class="headerlink" title="块存储的特点："></a>块存储的特点：</h2><p>1.主要是将裸磁盘空间映射给主机使用的，共享的最小单位是块     </p>
+<p>2.使用的交换机是光纤交换机价格贵成本高     </p>
+<p>3.性能最好，扩展性好     </p>
+<p>4.不能做文件系统的共享</p>
+<p>最典型的就是SAN（storage area network）(存储区域网)—-有一个局域网里面有一个交换机， 交换机上面连着服务器，所有服务器都是专业存储的设备，他们组成一个存储区域网，当我们用的时候只需要在 这个区域网里面拿空间使用</p>
+<h2 id="对象存储"><a href="#对象存储" class="headerlink" title="对象存储"></a>对象存储</h2><h3 id="为什么需要对象存储？"><a href="#为什么需要对象存储？" class="headerlink" title="为什么需要对象存储？"></a>为什么需要对象存储？</h3><p>首先，一个文件包含了属性（术语叫metadata，元数据，例如该文件的大小、修改时间、存储路径等）以及内容（以下简称数据）。      </p>
+<p>而对象存储则将元数据独立了出来，控制节点叫元数据服务器（服务器+对象存储管理软件），里面主要负责存储对象的属性（主要是对象的数据被打散存放到了那几台分布式服务器中的信息），而其他负责存储数据的分布式服务器叫做OSD，主要负责存储文件的数据部分。当用户访问对象，会先访问元数据服务器，元数据服务器只负责反馈对象存储在哪些OSD，假设反馈文件A存储在B、C、D三台OSD， 那么用户就会再次直接访问3台OSD服务器去读取数据。      </p>
+<p>由于是3台OSD同时对外传输数据，所以传输的速度就加快了。当OSD服务器数量越多，这种读写速度的提升就越大，通过此种方式，实现了读写快的目的。      </p>
+<p>另一方面，对象存储软件是有专门的文件系统的，所以OSD对外又相当于文件服务器，那么就不存在文件共享方面的困难了，也解决了文件共享方面的问题。      </p>
+<p>#所以对象存储的出现，很好地结合了块存储与文件存储的优点。  </p>
+<h3 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h3><ol>
+<li><p>具备块存储的读写高速。         </p>
+</li>
+<li><p>具备文件存储的共享等特性。  </p>
+</li>
+</ol>
+<h3 id="使用场景：-适合更新变动较少的数据"><a href="#使用场景：-适合更新变动较少的数据" class="headerlink" title="使用场景： (适合更新变动较少的数据)"></a>使用场景： (适合更新变动较少的数据)</h3><ol>
+<li><p>图片存储。         </p>
+</li>
+<li><p>视频存储。</p>
+</li>
+</ol>
 
     </div>
 
@@ -406,7 +444,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://blog.crazylinux.cc/post/2017/python3-ipy/" title="Python 的 IP 地址处理模块 IPy">https://blog.crazylinux.cc/post/2017/python3-ipy/</a>
+      <a href="https://blog.crazylinux.cc/post/2020/cephfs-info/" title="Ceph 分布式文件系统简介">https://blog.crazylinux.cc/post/2020/cephfs-info/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -432,20 +470,20 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/post/2017/python-send-mail/" rel="prev" title="Python 发送电子邮件">
-                  <i class="fa fa-chevron-left"></i> Python 发送电子邮件
+                <a href="/post/2020/my-vimrc-backup/" rel="prev" title="我的 vim 配置文件">
+                  <i class="fa fa-chevron-left"></i> 我的 vim 配置文件
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/2018/pipenv-guide/" rel="next" title="Pipenv 使用指南">
-                  Pipenv 使用指南 <i class="fa fa-chevron-right"></i>
+                <a href="/post/2020/cephfs-setup/" rel="next" title="Ceph 分布式系统搭建">
+                  Ceph 分布式系统搭建 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
