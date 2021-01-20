@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"blog.crazylinux.cc","root":"/","images":"/images","scheme":"Pisces","version":"8.2.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}};
+  </script>
+<meta name="description" content="MooseFS是一个具备冗余容错功能、高可用、高性能、可扩展的网络分布式文件系统，它将数据分别存放在多个物理服务器或一个服务器的多块磁盘，确保一份数据有多个备份副本，然而对于访问MFS的客户端或者用户来说，整个网络分布式文件系统集群看起来就像一个虚拟磁盘一样。MooseFS分为普通版和Pro版本，Pro版本需要授权。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MooseFS网络分布式文件系统指南">
+<meta property="og:url" content="https://blog.crazylinux.cc/post/2021/moosefs-guide/index.html">
+<meta property="og:site_name" content="Neal&#39;s Blog!">
+<meta property="og:description" content="MooseFS是一个具备冗余容错功能、高可用、高性能、可扩展的网络分布式文件系统，它将数据分别存放在多个物理服务器或一个服务器的多块磁盘，确保一份数据有多个备份副本，然而对于访问MFS的客户端或者用户来说，整个网络分布式文件系统集群看起来就像一个虚拟磁盘一样。MooseFS分为普通版和Pro版本，Pro版本需要授权。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pengshp.coding.net/p/images/d/images/git/raw/master/moosefs-pro-architecture.png">
+<meta property="og:image" content="https://pengshp.coding.net/p/images/d/images/git/raw/master/blog-mfs2.png">
+<meta property="og:image" content="https://pengshp.coding.net/p/images/d/images/git/raw/master/clipboard.png">
+<meta property="og:image" content="C:%5CUsers%5Cpengs%5CAppData%5CLocal%5CYNote%5Cdata%5Cpengshunpin.edu@163.com%5Cd155b90584b54486a191ec7ec187ada9%5Cclipboard.png">
+<meta property="og:image" content="C:%5CUsers%5Cpengs%5CAppData%5CLocal%5CYNote%5Cdata%5Cpengshunpin.edu@163.com%5C8201d2ef710341c9a493519087ab114c%5Cclipboard.png">
+<meta property="og:image" content="C:%5CUsers%5Cpengs%5CAppData%5CLocal%5CYNote%5Cdata%5Cpengshunpin.edu@163.com%5C5a62cd27e5cd400687ca32235dc4c4e0%5Cclipboard.png">
+<meta property="article:published_time" content="2021-01-20T11:09:02.000Z">
+<meta property="article:modified_time" content="2021-01-20T12:04:27.207Z">
+<meta property="article:author" content="pengshp">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pengshp.coding.net/p/images/d/images/git/raw/master/moosefs-pro-architecture.png">
+
+
+<link rel="canonical" href="https://blog.crazylinux.cc/post/2021/moosefs-guide/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<title>MooseFS网络分布式文件系统指南 | Neal's Blog!</title>
+  
+
+
+
+  <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "001a4dd9765d4058943d1aca09707093"}'></script>
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="Neal's Blog!" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Neal's Blog!</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人博客，记录点滴!</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">50</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">13</span></a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">29</span></a></li>
+        <li class="menu-item menu-item-guestbook"><a href="/guestbook/" rel="section"><i class="fa fa-comments fa-fw"></i>留言</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MooseFS-%E7%89%B9%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">MooseFS 特性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MooseFS-%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.</span> <span class="nav-text">MooseFS 应用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MooseFS-%E7%BB%84%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">MooseFS 组成</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MooseFS-%E5%8E%9F%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">MooseFS 原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MooseFS-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA"><span class="nav-number">5.</span> <span class="nav-text">MooseFS 集群搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-number">5.1.</span> <span class="nav-text">实验架构图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">5.2.</span> <span class="nav-text">环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AEMooseFS%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">5.2.1.</span> <span class="nav-text">1. 配置MooseFS软件源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AE%E8%A7%A3%E6%9E%90"><span class="nav-number">5.2.2.</span> <span class="nav-text">2. 配置解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E6%AD%A5%E9%AA%A4"><span class="nav-number">5.3.</span> <span class="nav-text">搭建步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Master-Server"><span class="nav-number">5.3.1.</span> <span class="nav-text">Master Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Metadata-backup-servers-Metaloggers"><span class="nav-number">5.3.2.</span> <span class="nav-text">Metadata backup servers (Metaloggers)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chunkservers%E9%85%8D%E7%BD%AE"><span class="nav-number">5.3.3.</span> <span class="nav-text">Chunkservers配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Client%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.3.4.</span> <span class="nav-text">Client客户端设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">5.3.5.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E7%9A%84%E5%81%9C%E6%AD%A2MooseFS%E9%9B%86%E7%BE%A4"><span class="nav-number">5.3.6.</span> <span class="nav-text">安全的停止MooseFS集群</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="pengshp"
+      src="/images/me.png">
+  <p class="site-author-name" itemprop="name">pengshp</p>
+  <div class="site-description" itemprop="description">2B的世界NB的活着!</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/pengshp" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:pengshp3@outlook.com" title="E-Mail → mailto:pengshp3@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/pengshp" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;pengshp" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://gaomf.cn/" title="https:&#x2F;&#x2F;gaomf.cn&#x2F;" rel="noopener" target="_blank">高明飞博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.phpgao.com/archives.html" title="https:&#x2F;&#x2F;blog.phpgao.com&#x2F;archives.html" rel="noopener" target="_blank">老高博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://linsir.org/" title="https:&#x2F;&#x2F;linsir.org&#x2F;" rel="noopener" target="_blank">Linsir's Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.lxx1.com/" title="https:&#x2F;&#x2F;blog.lxx1.com" rel="noopener" target="_blank">科技爱好者</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://spadesq.me/" title="http:&#x2F;&#x2F;spadesq.me" rel="noopener" target="_blank">SpadesQ</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/LyShark" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;LyShark" rel="noopener" target="_blank">LyShark</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://lupeng.me/" title="http:&#x2F;&#x2F;lupeng.me" rel="noopener" target="_blank">LP'Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.gitbook.net/" title="http:&#x2F;&#x2F;www.gitbook.net" rel="noopener" target="_blank">极客书</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://yukang.me/" title="http:&#x2F;&#x2F;yukang.me&#x2F;" rel="noopener" target="_blank">裕康博客</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://wuxiaolong.me/" title="http:&#x2F;&#x2F;wuxiaolong.me" rel="noopener" target="_blank">吴小龙同学</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.crazylinux.cc/post/2021/moosefs-guide/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/me.png">
+      <meta itemprop="name" content="pengshp">
+      <meta itemprop="description" content="2B的世界NB的活着!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Neal's Blog!">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MooseFS网络分布式文件系统指南
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-01-20 19:09:02 / 修改时间：20:04:27" itemprop="dateCreated datePublished" datetime="2021-01-20T19:09:02+08:00">2021-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/moosefs-pro-architecture.png" alt="moosefs-pro-architecture"></p>
+<p>MooseFS是一个具备冗余容错功能、高可用、高性能、可扩展的网络分布式文件系统，它将数据分别存放在多个物理服务器或一个服务器的多块磁盘，确保一份数据有多个备份副本，然而对于访问MFS的客户端或者用户来说，整个网络分布式文件系统集群看起来就像一个虚拟磁盘一样。MooseFS分为普通版和Pro版本，Pro版本需要授权。</p>
+<a id="more"></a>
+
+<h1 id="MooseFS-特性"><a href="#MooseFS-特性" class="headerlink" title="MooseFS 特性"></a>MooseFS 特性</h1><p>a.高可靠性：每一份数据可以设置多个备份（多分数据），并可以存储在不同的主机上</p>
+<p>b.高可扩展性：可以很轻松的通过增加主机的磁盘容量或增加主机数量来动态扩展整个文件系统的存储量</p>
+<p>c.高可容错性：我们可以通过对mfs进行系统设置，实现当数据文件被删除后的一段时间内，依旧存放于主机的回收站中，以备误删除恢复数据</p>
+<p>d.高数据一致性：即使文件被写入、访问时，我们依然可以轻松完成对文件的一致性快照；</p>
+<h1 id="MooseFS-应用场景"><a href="#MooseFS-应用场景" class="headerlink" title="MooseFS 应用场景"></a>MooseFS 应用场景</h1><ul>
+<li><p>大规模高并发的线上数据存储及访问（小文件，大文件都适合）</p>
+</li>
+<li><p>大规模的数据处理，如日志分析，小文件强调性能不用HDFS</p>
+</li>
+</ul>
+<h1 id="MooseFS-组成"><a href="#MooseFS-组成" class="headerlink" title="MooseFS 组成"></a>MooseFS 组成</h1><ul>
+<li><p>管理服务器 (master server) 简称 <code>master</code> ：</p>
+<p>这个组件的角色是管理整个mfs文件系统的主服务器，除了分发用户请求外，还用来存储整个文件系统中每个数据文件的metadata信息，metadate（元数据）信息包括文件（也可以是目录，socket，管道，块设备等）的大小，属性，文件的位置路径等。</p>
+</li>
+<li><p>云数据备份服务器 (Metadata backup servers) 简称 <code>metalogger</code>：</p>
+<p>这个组件的作用是备份管理服务器master的变化的metadata信息日志文件，文件类型为changelog_ml.*.mfs。以便于在管理服务器出问题时，可以经过简单的操作即可让新的主服务器进行工作。</p>
+</li>
+<li><p>数据存储服务器组（chunk servers）简称data：</p>
+<p>这个组件就是真正存放数据文件实体的服务器了，这个角色可以有多台不同的物理服务器或不同的磁盘及分区来充当，当配置数据的副本多于一份时，据写入到一个数据服务器后，会根据算法在其他数据服务器上进行同步备份。</p>
+</li>
+<li><p>客户机服务器组（client servers）简称 <code>client</code>：</p>
+<p>这个组件就是挂载并使用mfs文件系统的客户端，当读写文件时，客户端首先会连接主管理服务器获取数据的metadata信息，然后根据得到的metadata信息，访问数据服务器读取或写入文件实体，mfs客户端通过fuse mechanism实现挂载mfs文件系统的，因此，只有系统支持fuse，就可以作为客户端访问mfs整个文件系统。</p>
+</li>
+</ul>
+<h1 id="MooseFS-原理"><a href="#MooseFS-原理" class="headerlink" title="MooseFS 原理"></a>MooseFS 原理</h1><ol>
+<li><p>Master记录着管理信息，比如：文件路径|大小|存储的位置(ip,port,chunkid)|份数|时间等，元数据信息存在于内存中，会定期写入metadata.mfs.back文件中，定期同步到metalogger，操作实时写入changelog.*.mfs，实时同步到metalogger中。master启动将metadata.mfs载入内存，重命名为metadata.mfs.back文件。</p>
+</li>
+<li><p>文件以chunk大小存储，每chunk最大为64M，小于64M的，该chunk的大小即为该文件大小（验证实际chunk文件略大于实际文件），超过64M的文件将被切分，以每一份（chunk）的大小不超过64M为原则；块的生成遵循规则：目录循环写入(00-FF 256个目录循环，step为2)、chunk文件递增生成、大文件切分目录连续。</p>
+</li>
+<li><p>Chunkserver上的剩余存储空间要大于1GB（Reference Guide有提到），新的数据才会被允许写入，否则，你会看到No space left on device的提示</p>
+</li>
+<li><p>文件可以有多份copy，当goal为1时，文件会被随机存到一台chunkserver上，当goal的数大于1时，copy会由master调度保存到不同的chunkserver上，goal的大小不要超过chunkserver的数量，否则多出的copy，不会有chunkserver去存。</p>
+</li>
+</ol>
+<h1 id="MooseFS-集群搭建"><a href="#MooseFS-集群搭建" class="headerlink" title="MooseFS 集群搭建"></a>MooseFS 集群搭建</h1><h2 id="实验架构图"><a href="#实验架构图" class="headerlink" title="实验架构图"></a>实验架构图</h2><p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/blog-mfs2.png" alt="blog-mfs2"></p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ul>
+<li>操作系统：CentOS7</li>
+<li>MooseFS版本：3.0.115</li>
+<li>chunk servers 加入 5G 的磁盘</li>
+</ul>
+<blockquote>
+<p>一下步骤在所有节点操作</p>
+</blockquote>
+<h3 id="1-配置MooseFS软件源"><a href="#1-配置MooseFS软件源" class="headerlink" title="1. 配置MooseFS软件源"></a>1. 配置MooseFS软件源</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 导入验证密钥</span></span><br><span class="line">curl &quot;https://ppa.moosefs.com/RPM-GPG-KEY-MooseFS&quot; &gt; /etc/pki/rpm-gpg/RPM-GPG-KEY-MooseFS</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 添加yum 源</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> For CentOS8</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> curl <span class="string">&quot;http://ppa.moosefs.com/MooseFS-3-el8.repo&quot;</span> &gt; /etc/yum.repos.d/MooseFS.repo</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> For CentOS7</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> curl <span class="string">&quot;http://ppa.moosefs.com/MooseFS-3-el7.repo&quot;</span> &gt; /etc/yum.repos.d/MooseFS.repo</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> For CentOS6</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> curl <span class="string">&quot;http://ppa.moosefs.com/MooseFS-3-el6.repo&quot;</span> &gt; /etc/yum.repos.d/MooseFS.repo</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-配置解析"><a href="#2-配置解析" class="headerlink" title="2. 配置解析"></a>2. 配置解析</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 所有节点</span></span><br><span class="line">[root@CentOS] ~$ echo &#x27;10.10.10.11 mfsmaster&#x27; &gt;&gt; /etc/hosts</span><br></pre></td></tr></table></figure>
+<h2 id="搭建步骤"><a href="#搭建步骤" class="headerlink" title="搭建步骤"></a>搭建步骤</h2><h3 id="Master-Server"><a href="#Master-Server" class="headerlink" title="Master Server"></a>Master Server</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install moosefs-master moosefs-cgi moosefs-cgiserv moosefs-cli</span></span><br><span class="line"></span><br><span class="line">[root@CentOS] ~$ vim /etc/mfs/mfsexports.cfg</span><br><span class="line">10.10.10.0/24   /   rw,alldirs,maproot=0</span><br><span class="line"><span class="meta">#</span><span class="bash"> ·  表示MFS文件系统</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rw,alldirs,maproot=0    表示客户端拥有的权限</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> rw  读写方式分享</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> alldirs  允许挂载任何指定的子目录</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> maproot   映射为root用户还是指定的用户，为0则不映射</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> password  指定客户端密码</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改master server 配置文件</span></span><br><span class="line">[root@CentOS] ~$ vim /etc/mfs/mfsmaster.cfg</span><br><span class="line">WORKING_USER = mfs</span><br><span class="line">WORKING_GROUP = mfs</span><br><span class="line">SYSLOG_IDENT = mfsmaster</span><br><span class="line">DATA_PATH = /var/lib/mfs</span><br><span class="line">EXPORTS_FILENAME = /etc/mfs/mfsexports.cfg</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动服务</span></span><br><span class="line">[root@CentOS] ~$ systemctl enable --now moosefs-master.service</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置MooseFS CGI Server</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> MooseFS CGI 监控接口用于观察和分析 MooseFS 当前的状态</span></span><br><span class="line">[root@CentOS] ~$ systemctl enable --now moosefs-cgiserv.service</span><br><span class="line">[root@CentOS] ~$ netstat -antpl |grep 9425</span><br><span class="line">tcp        0      0 0.0.0.0:9425            0.0.0.0:*               LISTEN      2703/python2</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 浏览器访问</span> </span><br><span class="line">firefox http://10.10.10.11:9425</span><br></pre></td></tr></table></figure>
+<p><img src="https://pengshp.coding.net/p/images/d/images/git/raw/master/clipboard.png" alt="img"></p>
+<h3 id="Metadata-backup-servers-Metaloggers"><a href="#Metadata-backup-servers-Metaloggers" class="headerlink" title="Metadata backup servers (Metaloggers)"></a>Metadata backup servers (Metaloggers)</h3><p>元数据备份节点配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install moosefs-metalogger</span></span><br><span class="line"></span><br><span class="line">[root@CentOS] ~$ vim /etc/mfs/mfsmetalogger.cfg</span><br><span class="line">WORKING_USER = mfs</span><br><span class="line">WORKING_GROUP = mfs</span><br><span class="line">SYSLOG_IDENT = mfsmetalogger</span><br><span class="line">DATA_PATH = /var/lib/mfs</span><br><span class="line">BIND_HOST = 10.10.10.12</span><br><span class="line">MASTER_HOST = mfsmaster</span><br><span class="line">MASTER_PORT = 9419</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动服务</span></span><br><span class="line">[root@CentOS] ~$ systemctl enable --now moosefs-metalogger.service</span><br><span class="line">[root@CentOS] ~$ netstat -antpl |grep mfs</span><br><span class="line">tcp        0      0 10.10.10.12:42183       10.10.10.11:9419        ESTABLISHED 2384/mfsmetalogger</span><br></pre></td></tr></table></figure>
+<h3 id="Chunkservers配置"><a href="#Chunkservers配置" class="headerlink" title="Chunkservers配置"></a>Chunkservers配置</h3><p>① 磁盘设置</p>
+<p>每台 chunkserver 上添加一块5G的磁盘</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 分区</span></span><br><span class="line">[root@CentOS] ~$ parted --align optimal /dev/sdb</span><br><span class="line">GNU Parted 3.1</span><br><span class="line">使用 /dev/sdb</span><br><span class="line">Welcome to GNU Parted! Type &#x27;help&#x27; to view a list of commands.</span><br><span class="line">(parted) mklabel gpt</span><br><span class="line">(parted) mkpart mfschunks1 0% 100%</span><br><span class="line">(parted) q</span><br><span class="line">信息: You may need to update /etc/fstab.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 格式化</span></span><br><span class="line">[root@CentOS] ~$ mkfs -t xfs /dev/sdb1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载</span></span><br><span class="line">[root@CentOS] ~$ mkdir /mnt/mfschunks1</span><br><span class="line">[root@CentOS] ~$</span><br><span class="line">[root@CentOS] ~$ mount /mnt/mfschunks1</span><br><span class="line">[root@CentOS] ~$ chown mfs.mfs /mnt/mfschunks1</span><br><span class="line">[root@CentOS] ~$ chmod 770 /mnt/mfschunks1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置开机自动挂载</span></span><br><span class="line">[root@CentOS] ~$ vim /etc/fstab</span><br><span class="line">/dev/sdb1                                 /mnt/mfschunks1         xfs     defaults        0 0</span><br></pre></td></tr></table></figure>
+<p>② chunk 服务设置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装软件包</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yum install moosefs-chunkserver</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改配置文件</span></span><br><span class="line">[root@CentOS] ~$ vim /etc/mfs/mfschunkserver.cfg</span><br><span class="line">WORKING_USER = mfs</span><br><span class="line">WORKING_GROUP = mfs</span><br><span class="line">SYSLOG_IDENT = mfschunkserver</span><br><span class="line">DATA_PATH = /var/lib/mfs</span><br><span class="line">HDD_CONF_FILENAME = /etc/mfs/mfshdd.cfg</span><br><span class="line">LABELS = chunkserver1</span><br><span class="line">BIND_HOST = 10.10.10.13</span><br><span class="line">MASTER_HOST = mfsmaster</span><br><span class="line">MASTER_PORT = 9420</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改挂载的磁盘配置</span></span><br><span class="line">[root@CentOS] ~$ vim /etc/mfs/mfshdd.cfg</span><br><span class="line">/mnt/mfschunks1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动服务，不能手动挂载 mount -a</span></span><br><span class="line">[root@CentOS] ~$ systemctl enable --now moosefs-chunkserver.service</span><br><span class="line"></span><br><span class="line">[root@CentOS] ~$ netstat -antpl |grep mfs</span><br><span class="line">tcp     0      0 0.0.0.0:9422         0.0.0.0:*   LISTEN      2070/mfschunkserver</span><br><span class="line">tcp     0      0 10.10.10.13:38923    10.10.10.11:9420    ESTABLISHED 2070/mfschunkserver</span><br></pre></td></tr></table></figure>
+<p><img src="C:%5CUsers%5Cpengs%5CAppData%5CLocal%5CYNote%5Cdata%5Cpengshunpin.edu@163.com%5Cd155b90584b54486a191ec7ec187ada9%5Cclipboard.png" alt="img"></p>
+<h3 id="Client客户端设置"><a href="#Client客户端设置" class="headerlink" title="Client客户端设置"></a>Client客户端设置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install fuse libfuse2</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> yum install moosefs-client</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 挂载MFS文件系统</span></span><br><span class="line">[root@dev ~]# mkdir -p /mnt/mfs</span><br><span class="line">[root@dev ~]# mfsmount /mnt/mfs/ -H mfsmaster</span><br><span class="line">mfsmaster accepted connection with parameters: read-write,restricted_ip,admin ; root mapped to root:root</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看挂载的情况</span></span><br><span class="line">[root@dev ~]# df -h |grep mfs</span><br><span class="line">mfsmaster:9421   10G  577M  9.5G    6% /mnt/mfs</span><br></pre></td></tr></table></figure>
+<p><img src="C:%5CUsers%5Cpengs%5CAppData%5CLocal%5CYNote%5Cdata%5Cpengshunpin.edu@163.com%5C8201d2ef710341c9a493519087ab114c%5Cclipboard.png" alt="img"></p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>在客户端新建目录folder1 ，设置目录有一份拷贝（goal=1）,新建目录folder2 ，设置目录有一份拷贝（goal=2）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@dev ~]# mkdir -p /mnt/mfs/folder1</span><br><span class="line">[root@dev ~]# mkdir -p /mnt/mfs/folder2</span><br><span class="line">[root@dev ~]# mfssetgoal -r 1 /mnt/mfs/folder1</span><br><span class="line">/mnt/mfs/folder1:</span><br><span class="line"> inodes with goal changed:                       1</span><br><span class="line"> inodes with goal not changed:                   0</span><br><span class="line"> inodes with permission denied:                  0</span><br><span class="line">[root@dev ~]# mfssetgoal -r 2 /mnt/mfs/folder2</span><br><span class="line">/mnt/mfs/folder2:</span><br><span class="line"> inodes with goal changed:                       0</span><br><span class="line"> inodes with goal not changed:                   1</span><br><span class="line"> inodes with permission denied:                  0</span><br></pre></td></tr></table></figure>
+<p>注意：副本的数量不能超过chunk server的数量。</p>
+<p>新建文件测试，查看文件的副本信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@dev ~]# echo &#x27;Hello MFS!&#x27; &gt; test.txt</span><br><span class="line">[root@dev ~]# cp test.txt /mnt/mfs/folder1</span><br><span class="line">[root@dev ~]# cp test.txt /mnt/mfs/folder2</span><br><span class="line"></span><br><span class="line">[root@dev ~]# mfscheckfile /mnt/mfs/folder1/test.txt</span><br><span class="line">/mnt/mfs/folder1/test.txt:</span><br><span class="line"> chunks with 1 copy:              1  # &lt;---- one copy</span><br><span class="line">[root@dev ~]# mfscheckfile /mnt/mfs/folder2/test.txt</span><br><span class="line">/mnt/mfs/folder2/test.txt:</span><br><span class="line"> chunks with 2 copies:            1  # &lt;---- two copies</span><br></pre></td></tr></table></figure>
+<p><img src="C:%5CUsers%5Cpengs%5CAppData%5CLocal%5CYNote%5Cdata%5Cpengshunpin.edu@163.com%5C5a62cd27e5cd400687ca32235dc4c4e0%5Cclipboard.png" alt="img"></p>
+<h3 id="安全的停止MooseFS集群"><a href="#安全的停止MooseFS集群" class="headerlink" title="安全的停止MooseFS集群"></a>安全的停止MooseFS集群</h3><ol>
+<li><p>客户端卸载所有的挂载点 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@dev ~] $ lsof -n |grep mfsmount</span><br><span class="line">[root@dev ~] $ umount /mnt/mfs</span><br></pre></td></tr></table></figure></li>
+<li><p>停止 Chunkserver 服务</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@CentOS] ~$ systemctl stop moosefs-chunkserver.service</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>停止 Master Server 服务</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@CentOS] ~$ systemctl stop moosefs-master.service</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>停止 Metalogger 服务</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@CentOS] ~$ systemctl stop moosefs-metalogger.service</span><br></pre></td></tr></table></figure>
+
+
+<p>参考：</p>
+<p><a target="_blank" rel="noopener" href="https://moosefs.com/">MooseFS官网</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechatpay.png" alt="pengshp 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="pengshp 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>pengshp
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.crazylinux.cc/post/2021/moosefs-guide/" title="MooseFS网络分布式文件系统指南">https://blog.crazylinux.cc/post/2021/moosefs-guide/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="followme">
+  <span>欢迎关注我的其它发布渠道</span>
+
+  <div class="social-list">
+
+      <div class="social-item">
+        <a target="_blank" class="social-link" href="/atom.xml">
+          <span class="icon">
+            <i class="fa fa-rss"></i>
+          </span>
+
+          <span class="label">RSS</span>
+        </a>
+      </div>
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/2020/linux-tinyproxy-config/" rel="prev" title="Linux配置Tinyproxy代理">
+                  <i class="fa fa-chevron-left"></i> Linux配置Tinyproxy代理
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pengshp</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">75k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:09</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
