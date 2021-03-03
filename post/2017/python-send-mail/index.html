@@ -325,6 +325,20 @@
     </span>
 
   
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Valine：</span>
+  
+    <a title="valine" href="/post/2017/python-send-mail/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/2017/python-send-mail/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
       </div>
       <div class="post-meta">
     <span class="post-meta-item" title="本文字数">
@@ -352,7 +366,7 @@
     <div class="post-body" itemprop="articleBody">
         <p>Email的历史比Web还要久远，直到现在，Email也是互联网上应用非常广泛的服务。本文介绍邮件的传递过程及使用Python实现邮件的发送。</p>
 <a id="more"></a>
-<h2 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p>假设我们自己的电子邮件地址是<a href="mailto:&#x6d;&#x65;&#x40;&#49;&#54;&#51;&#46;&#x63;&#111;&#109;">&#x6d;&#x65;&#x40;&#49;&#54;&#51;&#46;&#x63;&#111;&#109;</a>，对方的电子邮件地址是<a href="mailto:&#x66;&#114;&#105;&#x65;&#x6e;&#100;&#x40;&#x73;&#x69;&#110;&#x61;&#x2e;&#x63;&#x6f;&#109;">&#x66;&#114;&#105;&#x65;&#x6e;&#100;&#x40;&#x73;&#x69;&#110;&#x61;&#x2e;&#x63;&#x6f;&#109;</a>，现在我们用Outlook或者Foxmail之类的软件写好邮件，填上对方的Email地址，点“发送”，电子邮件就发出去了。这些电子邮件软件被称为MUA：Mail User Agent——邮件用户代理。<br>Email从MUA发出去，不是直接到达对方电脑，而是发到MTA：Mail Transfer Agent——邮件传输代理，就是那些Email服务提供商，比如网易、新浪等等。由于我们自己的电子邮件是163.com，所以，Email首先被投递到网易提供的MTA，再由网易的MTA发到对方服务商，也就是新浪的MTA。<br>Email到达新浪的MTA后，由于对方使用的是@sina.com的邮箱，因此，新浪的MTA会把Email投递到邮件的最终目的地MDA：Mail Delivery Agent——邮件投递代理。Email到达MDA后，就静静地躺在新浪的某个服务器上，存放在某个文件或特殊的数据库里，我们将这个长期保存邮件的地方称之为电子邮箱。<br>Email不会直接到达对方的电脑，因为对方电脑不一定开机，开机也不一定联网。对方要取到邮件，必须通过MUA从MDA上把邮件取到自己的电脑上。<br>所以，一封电子邮件的旅程就是：<br>发件人 -&gt; MUA -&gt; MTA -&gt; MTA -&gt; 若干个MTA -&gt; MDA &lt;- MUA &lt;- 收件人<br>发邮件时，MUA和MTA使用的协议就是SMTP：Simple Mail Transfer Protocol；<br>收邮件时，MUA和MDA使用的协议有两种：</p>
+<h2 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><p>假设我们自己的电子邮件地址是<a href="mailto:&#109;&#x65;&#x40;&#49;&#x36;&#51;&#46;&#x63;&#111;&#109;">&#109;&#x65;&#x40;&#49;&#x36;&#51;&#46;&#x63;&#111;&#109;</a>，对方的电子邮件地址是<a href="mailto:&#x66;&#x72;&#x69;&#101;&#110;&#100;&#x40;&#115;&#105;&#110;&#x61;&#x2e;&#x63;&#111;&#109;">&#x66;&#x72;&#x69;&#101;&#110;&#100;&#x40;&#115;&#105;&#110;&#x61;&#x2e;&#x63;&#111;&#109;</a>，现在我们用Outlook或者Foxmail之类的软件写好邮件，填上对方的Email地址，点“发送”，电子邮件就发出去了。这些电子邮件软件被称为MUA：Mail User Agent——邮件用户代理。<br>Email从MUA发出去，不是直接到达对方电脑，而是发到MTA：Mail Transfer Agent——邮件传输代理，就是那些Email服务提供商，比如网易、新浪等等。由于我们自己的电子邮件是163.com，所以，Email首先被投递到网易提供的MTA，再由网易的MTA发到对方服务商，也就是新浪的MTA。<br>Email到达新浪的MTA后，由于对方使用的是@sina.com的邮箱，因此，新浪的MTA会把Email投递到邮件的最终目的地MDA：Mail Delivery Agent——邮件投递代理。Email到达MDA后，就静静地躺在新浪的某个服务器上，存放在某个文件或特殊的数据库里，我们将这个长期保存邮件的地方称之为电子邮箱。<br>Email不会直接到达对方的电脑，因为对方电脑不一定开机，开机也不一定联网。对方要取到邮件，必须通过MUA从MDA上把邮件取到自己的电脑上。<br>所以，一封电子邮件的旅程就是：<br>发件人 -&gt; MUA -&gt; MTA -&gt; MTA -&gt; 若干个MTA -&gt; MDA &lt;- MUA &lt;- 收件人<br>发邮件时，MUA和MTA使用的协议就是SMTP：Simple Mail Transfer Protocol；<br>收邮件时，MUA和MDA使用的协议有两种：</p>
 <ul>
 <li>POP：Post Office Protocol，目前版本是3，俗称POP3；</li>
 <li>IMAP：Internet Message Access Protocol，目前版本是4，优点是不但能取邮件，还可以直接操作MDA上存储的邮件，比如从收件箱移到垃圾箱。</li>
@@ -480,6 +494,7 @@
 
 
 
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -522,7 +537,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">75k</span>
+    <span title="站点总字数">76k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
@@ -572,6 +587,19 @@
 
 
 
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('https://unpkg.com/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"DVyboNGqTwbmE8bIXWnuHSec-9Nh9j0Va","appKey":"MjcAKd3zkHmb6dfmX5DSo57h","serverURLs":null,"placeholder":"留个言再走吧! 支持Markdown语法吆...","avatar":"wavatar","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":false,"comment_count":true,"recordIP":false,"enableQQ":false,"requiredFields":[]}, {
+      el: '#valine-comments',
+      path: "/post/2017/python-send-mail/",
+      serverURLs: "https://dvybongq.api.lncldglobal.com"
+    }));
+  }, window.Valine);
+});
+</script>
 
 </body>
 </html>
