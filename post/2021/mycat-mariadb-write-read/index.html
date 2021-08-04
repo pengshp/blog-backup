@@ -30,16 +30,18 @@
 <meta property="og:site_name" content="Neal&#39;s Blog!">
 <meta property="og:description" content="MyCat是开源社区在阿里cobar基础上使用Java进行二次开发的开源数据库中间件,本文介绍使用 MyCat 实现读写分离.">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/pengshp/imgnote/raw/master/img/image-20210804225925453.png">
+<meta property="og:image" content="https://gitee.com/pengshp/imgnote/raw/master/img/image-20210804225925453.png">
 <meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f61991a54ff0478bbe6825f414605291~tplv-k3u1fbpfcp-watermark.image">
 <meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d62be6fd910645d6b5fd0de43129f6e4~tplv-k3u1fbpfcp-watermark.image">
 <meta property="og:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b83bc2375814d509b800ab7a74a6e14~tplv-k3u1fbpfcp-watermark.image">
 <meta property="article:published_time" content="2021-08-04T10:23:07.000Z">
-<meta property="article:modified_time" content="2021-08-04T10:26:54.405Z">
+<meta property="article:modified_time" content="2021-08-04T15:03:39.484Z">
 <meta property="article:author" content="pengshp">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f61991a54ff0478bbe6825f414605291~tplv-k3u1fbpfcp-watermark.image">
+<meta name="twitter:image" content="https://gitee.com/pengshp/imgnote/raw/master/img/image-20210804225925453.png">
 
 
 <link rel="canonical" href="https://blog.crazylinux.cc/post/2021/mycat-mariadb-write-read/">
@@ -311,7 +313,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-08-04 18:23:07 / 修改时间：18:26:54" itemprop="dateCreated datePublished" datetime="2021-08-04T18:23:07+08:00">2021-08-04</time>
+      <time title="创建时间：2021-08-04 18:23:07 / 修改时间：23:03:39" itemprop="dateCreated datePublished" datetime="2021-08-04T18:23:07+08:00">2021-08-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -345,14 +347,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.4k</span>
+      <span>5.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -363,18 +365,22 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>MyCat是开源社区在阿里cobar基础上使用Java进行二次开发的开源数据库中间件,本文介绍使用 <code>MyCat</code> 实现读写分离.</p>
+        <p><img src="https://gitee.com/pengshp/imgnote/raw/master/img/image-20210804225925453.png" alt="mycat"></p>
+<p>MyCat是开源社区在阿里cobar基础上使用Java进行二次开发的开源数据库中间件,本文介绍使用 <code>MyCat</code> 实现读写分离.</p>
 <a id="more"></a>
 
 
 
-<h2 id="MyCat简介"><a href="#MyCat简介" class="headerlink" title="MyCat简介"></a>MyCat简介</h2><p>MyCat是开源社区在阿里cobar基础上使用Java进行二次开发的开源数据库中间件</p>
+<h2 id="MyCat简介"><a href="#MyCat简介" class="headerlink" title="MyCat简介"></a>MyCat简介</h2><p>MyCat是开源社区在阿里cobar基础上使用Java进行二次开发的开源数据库中间件；是一个开源的分布式数据库系统，是一个实现了MySQL协议的的Server，前端用户可以把它看作是一个数据库代理，用MySQL客户端工具和命令行访问，而其后端可以用MySQL原生（Native）协议与多个MySQL服务器通信，也可以用JDBC协议与大多数主流数据库服务器通信，其核心功能是分表分库，即将一个大表水平分割为N个小表，存储在后端MySQL服务器里或者其他数据库里。</p>
+<p>Mycat发展到目前的版本，已经不是一个单纯的MySQL代理了，它的后端可以支持MySQL、SQL Server、Oracle、DB2、PostgreSQL等主流数据库，也支持MongoDB这种新型NoSQL方式的存储，未来还会支持更多类型的存储。</p>
+<p>对于DBA来说，可以这么理解Mycat： Mycat就是MySQL Server，而Mycat后面连接的MySQL Server，就好象是MySQL的存储引擎,如InnoDB，MyISAM等，因此，Mycat本身并不存储数据，数据是在后端的MySQL上存储的，因此数据可靠性以及事务等都是MySQL保证的；</p>
+<p>对于架构师来说，可以这么理解Mycat：Mycat是一个<code>强大的数据库中间件</code>，不仅仅可以用作<code>读写分离、以及分表分库、容灾备份</code>，而且可以用于多租户应用开发、云平台基础设施、让你的架构具备很强的适应性和灵活性，借助于即将发布的Mycat智能优化模块，系统的数据访问瓶颈和热点一目了然，根据这些统计分析数据，你可以自动或手工调整后端存储，将不同的表映射到不同存储引擎上，而整个应用的代码一行也不用改变。</p>
 <p><a target="_blank" rel="noopener" href="http://www.mycat.org.cn/">Mycat1.6官网</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.yuque.com/ccazhw/tuacvk">Mycat1权威指南 · 语雀 (yuque.com)</a></p>
 <h2 id="MyCat作用"><a href="#MyCat作用" class="headerlink" title="MyCat作用"></a>MyCat作用</h2><ol>
-<li>读写分离</li>
-</ol>
-<ol start="2">
+<li><p>读写分离</p>
+<img src="https://gitee.com/pengshp/imgnote/raw/master/img/image-20210804225925453.png" alt="image-20210804225925453" style="zoom:80%;" />
+</li>
 <li><p>数据分片</p>
 <p> 垂直拆分（分库）、水平拆分（分表）、垂直+水平拆分（分库分表）</p>
 </li>
@@ -389,7 +395,7 @@
 <li>安装java运行环境JDK</li>
 </ol>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$ sudo wget http://dl.mycat.org.cn/jdk-8u20-linux-x64.tar.gz</span><br><span class="line">$ sudo tar -zxf jdk-8u20-linux-x64.tar.gz</span><br><span class="line">$ sudo mv jdk1.8.0_20 /usr/<span class="built_in">local</span>/jdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置环境变量</span></span><br><span class="line">~$ sudo vim /etc/profile.d/jdk.sh</span><br><span class="line">JAVA_HOME=/usr/<span class="built_in">local</span>/jdk</span><br><span class="line">JRE_HOME=<span class="variable">$JAVA_HOME</span>/jre</span><br><span class="line">CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br><span class="line">PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME JRE_HOME CLASSPATH PATH</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证</span></span><br><span class="line">[xdl@CentOS] ~$ <span class="built_in">source</span> /etc/profile</span><br><span class="line">[xdl@CentOS] ~$ java -version</span><br><span class="line">java version <span class="string">&quot;1.8.0_20&quot;</span></span><br><span class="line">Java(TM) SE Runtime Environment (build 1.8.0_20-b26)</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM (build 25.20-b23, mixed mode)</span><br></pre></td></tr></table></figure>
-<h2 id="MyCat安装-1"><a href="#MyCat安装-1" class="headerlink" title="MyCat安装"></a>MyCat安装</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo wget http://dl.mycat.org.cn/1.6.7.1/Mycat-server-1.6.7.1-release-20200209222254-linux.tar.gz</span><br><span class="line">~$ tar -zxf Mycat-server-1.6.7.1-release-20200209222254-linux.tar.gz -C /usr/<span class="built_in">local</span></span><br><span class="line">~$ ls /usr/<span class="built_in">local</span>/mycat</span><br><span class="line">bin  catlet  conf  lib  logs  version.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置java路径</span></span><br><span class="line">~$ sudo vim /usr/<span class="built_in">local</span>/mycat/conf/wrapper.conf</span><br><span class="line">wrapper.java.command=/usr/<span class="built_in">local</span>/jdk/bin/java</span><br><span class="line"></span><br><span class="line">wrapper.startup.timeout=300</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若启动出错，调整虚拟内存的大小</span></span><br><span class="line">wrapper.java.additional.9=-Xmx2G</span><br><span class="line">wrapper.java.additional.10=-Xms512M</span><br></pre></td></tr></table></figure>
+<h2 id="MyCat安装-1"><a href="#MyCat安装-1" class="headerlink" title="MyCat安装"></a>MyCat安装</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo wget http://dl.mycat.org.cn/1.6.7.1/Mycat-server-1.6.7.1-release-20200209222254-linux.tar.gz</span><br><span class="line">~$ tar -zxf Mycat-server-1.6.7.1-release-20200209222254-linux.tar.gz -C /usr/<span class="built_in">local</span></span><br><span class="line">~$ ls /usr/<span class="built_in">local</span>/mycat</span><br><span class="line">bin  catlet  conf  lib  logs  version.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置java路径</span></span><br><span class="line">~$ sudo vim /usr/<span class="built_in">local</span>/mycat/conf/wrapper.conf</span><br><span class="line">wrapper.java.command=/usr/<span class="built_in">local</span>/jdk/bin/java</span><br><span class="line"></span><br><span class="line">wrapper.startup.timeout=300</span><br><span class="line"></span><br><span class="line"><span class="comment"># 若启动出错，调整虚拟内存的大小</span></span><br><span class="line">wrapper.java.additional.9=-Xmx2G</span><br><span class="line">wrapper.java.additional.10=-Xms512M</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置环境变量</span></span><br><span class="line">~$ sudo vim /etc/profile.d/mycat.sh</span><br><span class="line">MYCAT_HOME=/usr/<span class="built_in">local</span>/mycat</span><br><span class="line"></span><br><span class="line">~$ <span class="built_in">source</span> /etc/profile</span><br></pre></td></tr></table></figure>
 <h2 id="MyCat读写分离架构"><a href="#MyCat读写分离架构" class="headerlink" title="MyCat读写分离架构"></a>MyCat读写分离架构</h2><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4b83bc2375814d509b800ab7a74a6e14~tplv-k3u1fbpfcp-watermark.image" alt="mycat"><br>应用直接连接MyCat的逻辑表testdb,MyCat后端连接真实的MySQL数据库实例，并把写数据和读数据分开，减轻单个MySQL实例的压力。</p>
 <h2 id="配置读写分离"><a href="#配置读写分离" class="headerlink" title="配置读写分离"></a>配置读写分离</h2><p>配置文件</p>
 <p>①schema.xml：定义逻辑库，表、分片节点等内容 </p>
@@ -397,9 +403,18 @@
 <p>③server.xml：定义用户以及系统相关变量，如端口等</p>
 <p>1、修改配置文件server.xml 修改mycat用户信息，与MySQL区分，如下：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo vim /usr/<span class="built_in">local</span>/mycat/conf/server.xml</span><br><span class="line">...p110</span><br><span class="line">&lt;user name=<span class="string">&quot;root&quot;</span> defaultAccount=<span class="string">&quot;true&quot;</span>&gt;</span><br><span class="line">        &lt;property name=<span class="string">&quot;password&quot;</span>&gt;mycatpw&lt;/property&gt;</span><br><span class="line">        &lt;property name=<span class="string">&quot;schemas&quot;</span>&gt;testdb&lt;/property&gt;</span><br><span class="line">        &lt;property name=<span class="string">&quot;defaultSchema&quot;</span>&gt;testdb&lt;/property&gt;</span><br></pre></td></tr></table></figure>
+<p>这里主要设置了MyCat的用户名，密码，逻辑库的name等属性</p>
 <p>2、修改配置文件 schema.xml</p>
 <p>删除<code>&lt;schema&gt;</code>标签间的表信息，<code>&lt;dataNode&gt;</code>标签只留一个，<code>&lt;dataHost&gt;</code>标签只留一个，<code>&lt;writeHost&gt; &lt;readHost&gt;</code>只留一对</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo vim /usr/<span class="built_in">local</span>/mycat/conf/schema.xml</span><br><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE mycat:schema SYSTEM <span class="string">&quot;schema.dtd&quot;</span>&gt;</span><br><span class="line">&lt;mycat:schema xmlns:mycat=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;schema name=<span class="string">&quot;testdb&quot;</span> checkSQLschema=<span class="string">&quot;false&quot;</span> sqlMaxLimit=<span class="string">&quot;100&quot;</span> dataNode=<span class="string">&quot;dn1&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/schema&gt;</span><br><span class="line">    &lt;dataNode name=<span class="string">&quot;dn1&quot;</span> dataHost=<span class="string">&quot;host1&quot;</span> database=<span class="string">&quot;test&quot;</span> /&gt;</span><br><span class="line">    &lt;dataHost name=<span class="string">&quot;host1&quot;</span> maxCon=<span class="string">&quot;1000&quot;</span> minCon=<span class="string">&quot;10&quot;</span> balance=<span class="string">&quot;0&quot;</span></span><br><span class="line">              writeType=<span class="string">&quot;0&quot;</span> dbType=<span class="string">&quot;mysql&quot;</span> dbDriver=<span class="string">&quot;native&quot;</span> switchType=<span class="string">&quot;1&quot;</span>  slaveThreshold=<span class="string">&quot;100&quot;</span>&gt;</span><br><span class="line">        &lt;heartbeat&gt;select user()&lt;/heartbeat&gt;</span><br><span class="line">        &lt;!-- can have multi write hosts --&gt;</span><br><span class="line">        &lt;writeHost host=<span class="string">&quot;hostM1&quot;</span> url=<span class="string">&quot;10.10.10.11:3306&quot;</span> user=<span class="string">&quot;root&quot;</span></span><br><span class="line">                   password=<span class="string">&quot;zxcv&quot;</span>&gt;</span><br><span class="line">            &lt;!-- can have multi <span class="built_in">read</span> hosts --&gt;</span><br><span class="line">            &lt;readHost host=<span class="string">&quot;hostS2&quot;</span> url=<span class="string">&quot;10.10.10.12:3306&quot;</span> user=<span class="string">&quot;root&quot;</span> password=<span class="string">&quot;zxcv&quot;</span> /&gt;</span><br><span class="line">        &lt;/writeHost&gt;</span><br><span class="line">    &lt;/dataHost&gt;</span><br><span class="line">&lt;/mycat:schema&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">~$ sudo vim /usr/<span class="built_in">local</span>/mycat/conf/schema.xml</span><br><span class="line">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span><br><span class="line">&lt;!DOCTYPE mycat:schema SYSTEM <span class="string">&quot;schema.dtd&quot;</span>&gt;</span><br><span class="line">&lt;mycat:schema xmlns:mycat=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;schema name=<span class="string">&quot;testdb&quot;</span> checkSQLschema=<span class="string">&quot;false&quot;</span> sqlMaxLimit=<span class="string">&quot;100&quot;</span> dataNode=<span class="string">&quot;dn1&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/schema&gt;</span><br><span class="line">    &lt;dataNode name=<span class="string">&quot;dn1&quot;</span> dataHost=<span class="string">&quot;host1&quot;</span> database=<span class="string">&quot;test&quot;</span> /&gt;</span><br><span class="line">    &lt;dataHost name=<span class="string">&quot;host1&quot;</span> maxCon=<span class="string">&quot;1000&quot;</span> minCon=<span class="string">&quot;10&quot;</span> balance=<span class="string">&quot;3&quot;</span></span><br><span class="line">              writeType=<span class="string">&quot;0&quot;</span> dbType=<span class="string">&quot;mysql&quot;</span> dbDriver=<span class="string">&quot;native&quot;</span> switchType=<span class="string">&quot;1&quot;</span>  slaveThreshold=<span class="string">&quot;100&quot;</span>&gt;</span><br><span class="line">        &lt;heartbeat&gt;select user()&lt;/heartbeat&gt;</span><br><span class="line">        &lt;!-- can have multi write hosts --&gt;</span><br><span class="line">        &lt;writeHost host=<span class="string">&quot;hostM1&quot;</span> url=<span class="string">&quot;10.10.10.11:3306&quot;</span> user=<span class="string">&quot;root&quot;</span></span><br><span class="line">                   password=<span class="string">&quot;zxcv&quot;</span>&gt;</span><br><span class="line">            &lt;!-- can have multi <span class="built_in">read</span> hosts --&gt;</span><br><span class="line">            &lt;readHost host=<span class="string">&quot;hostS2&quot;</span> url=<span class="string">&quot;10.10.10.12:3306&quot;</span> user=<span class="string">&quot;root&quot;</span> password=<span class="string">&quot;zxcv&quot;</span> /&gt;</span><br><span class="line">        &lt;/writeHost&gt;</span><br><span class="line">    &lt;/dataHost&gt;</span><br><span class="line">&lt;/mycat:schema&gt;</span><br></pre></td></tr></table></figure>
+<p>这里设置数据节点，以及对应的后端真实的MySQL实例属性，写库和读库的属性</p>
+<p>dataHost标签中有一个balance属性，用于设置读写分离</p>
+<ul>
+<li>balance=”0”, 不开启读写分离机制，所有读操作都发送到当前可用的 writeHost 上；</li>
+<li>balance=”1”，全部的 readHost 与 stand by writeHost 参与 select 语句的负载均衡；</li>
+<li>balance=”2”，所有读操作都随机的在 writeHost、readhost 上分发；</li>
+<li>balance=”3”，所有读请求随机的分发到 readhost 执行，writerHost 不负担读压力</li>
+</ul>
 <p>MariaDB数据库账号设置</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(none)]&gt; grant all privileges on *.* to root@<span class="string">&#x27;%&#x27;</span> identified by <span class="string">&#x27;zxcv&#x27;</span>;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [(none)]&gt; flush privileges;</span><br></pre></td></tr></table></figure>
 <h3 id="启动MyCat"><a href="#启动MyCat" class="headerlink" title="启动MyCat"></a>启动MyCat</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 前台启动</span></span><br><span class="line">~$ sudo /usr/<span class="built_in">local</span>/mycat/bin/mycat console</span><br><span class="line"></span><br><span class="line"><span class="comment"># 后台启动</span></span><br><span class="line">~$ sudo /usr/<span class="built_in">local</span>/mycat/bin/mycat start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看日志</span></span><br><span class="line">~$ sudo tail -f /usr/<span class="built_in">local</span>/mycat/logs/wrapper.log</span><br><span class="line">STATUS | wrapper  | 2021/08/04 16:49:51 | --&gt; Wrapper Started as Daemon</span><br><span class="line">STATUS | wrapper  | 2021/08/04 16:49:51 | Launching a JVM...</span><br><span class="line">INFO   | jvm 1    | 2021/08/04 16:50:17 | Wrapper (Version 3.2.3) http://wrapper.tanukisoftware.org</span><br><span class="line">INFO   | jvm 1    | 2021/08/04 16:50:17 |   Copyright 1999-2006 Tanuki Software, Inc.  All Rights Reserve</span><br><span class="line">INFO   | jvm 1    | 2021/08/04 16:50:17 |</span><br><span class="line">INFO   | jvm 1    | 2021/08/04 16:50:44 | MyCAT Server startup successfully. see logs <span class="keyword">in</span> logs/mycat.log</span><br></pre></td></tr></table></figure>
@@ -533,13 +548,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">85k</span>
+    <span title="站点总字数">86k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:17</span>
+    <span title="站点阅读时长">1:18</span>
   </span>
 </div>
 <div class="busuanzi-count">
